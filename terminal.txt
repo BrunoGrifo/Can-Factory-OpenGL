@@ -1,0 +1,1 @@
+gcc -o exe pl2.c -lGL -lGLU -lglut -lm
