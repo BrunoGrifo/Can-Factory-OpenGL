@@ -18,23 +18,135 @@
 #define GRAY     0.9, 0.92, 0.29, 1.0
 #define PI         3.14159
 
+
+GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 };
+GLfloat luzAmbiente[4] = { 1,1,1,1 };
 //
 int w=0,s=0,d=0,a=0;
 
 GLint        wScreen=800, hScreen=600;        //.. janela (pixeis)
 
+//Coordenadas da lata
+float canWalk[]={5,5,20};
+
+GLUquadricObj *quadratic;
+
+
 //Parametros de visao do observador
 GLfloat  rVisao=3.0, aVisao=0.5*PI, incVisao=0.2;
 
 //Posição inicial do observador
-GLfloat  obsPini[] ={5, 2, 22.5};
-GLfloat  obsPfin[] ={obsPini[0]-rVisao*cos(aVisao), obsPini[1], obsPini[2]-rVisao*sin(aVisao)};
+GLfloat  obsPini[] ={10, 2, 2};
+GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1], obsPini[2]+rVisao*sin(aVisao)};
 
 //Identificador das Texturas
 RgbImage imag;
-GLuint textures[1];
+GLuint textures[2];
 
+void drawEixos()
+{
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Eixo X
+    glColor4f(VERMELHO);
+    glBegin(GL_LINES);
+    glVertex3i( 0, 0, 0);
+    glVertex3i(10, 0, 0);
+    glEnd();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Eixo Y
+    glColor4f(VERDE);
+    glBegin(GL_LINES);
+    glVertex3i(0,  0, 0);
+    glVertex3i(0, 10, 0);
+    glEnd();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Eixo Z
+    glColor4f(AZUL);
+    glBegin(GL_LINES);
+    glVertex3i( 0, 0, 0);
+    glVertex3i( 0, 0,10);
+    glEnd();
+    
+}
+void draw_cylinder(GLfloat radius, GLfloat height, GLubyte R, GLubyte G, GLubyte B){
+    GLfloat x              = 0.0;
+    GLfloat y              = 0.0;
+    GLfloat angle          = 0.0;
+    GLfloat angle_stepsize = 0.1;
+    
+    /** Draw the tube */
+    glBegin(GL_QUAD_STRIP);
+    angle = 0.0;
+    while( angle < 2*PI ) {
+        x = radius * cos(angle);
+        y = radius * sin(angle);
+        glVertex3f(x, y , height);
+        glVertex3f(x, y , 0.0);
+        angle = angle + angle_stepsize;
+    }
+    glVertex3f(radius, 0.0, height);
+    glVertex3f(radius, 0.0, 0.0);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    
+    /** Draw the circle on top of cylinder */
+    glBegin(GL_POLYGON);
+    angle = 0.0;
+    while( angle < 2*PI ) {
+        x = radius * cos(angle);
+        y = radius * sin(angle);
+        glVertex3f(x, y , height);
+        angle = angle + angle_stepsize;
+    }
+    glVertex3f(radius, 0.0, height);
+    glEnd();
+}
 
+void drawCubo1(){
+    glPushMatrix();
+    
+        glBegin(GL_QUADS);
+            //UpperFace
+            glNormal3d(0, 1, 0);
+            glVertex3f( 0.5f,  0.5f, -0.5f);
+            glVertex3f(-0.5f,  0.5f, -0.5f);
+            glVertex3f(-0.5f,  0.5f,  0.5f);
+            glVertex3f( 0.5f,  0.5f,  0.5f);
+    
+            //BottomFace
+            glNormal3d(0, -1, 0);
+            glVertex3f( 0.5f, -0.5f, -0.5f);
+            glVertex3f( 0.5f, -0.5f,  0.5f);
+            glVertex3f(-0.5f, -0.5f,  0.5f);
+            glVertex3f(-0.5f, -0.5f, -0.5f);
+    
+            //FrontFace
+            glNormal3d(-1, 0, 0);
+            glVertex3f(-0.5f,  0.5f, -0.5f);
+            glVertex3f(-0.5f, -0.5f, -0.5f);
+            glVertex3f(-0.5f, -0.5f,  0.5f);
+            glVertex3f(-0.5f,  0.5f,  0.5f);
+    
+            //BackFace
+            glNormal3d(1, 0, 0);
+            glVertex3f( 0.5f,  0.5f,  0.0f);
+            glVertex3f( 0.5f,  0.0f,  0.0f);
+            glVertex3f( 0.5f,  0.0f,  0.5f);
+            glVertex3f( 0.5f,  0.5f,  0.5f);
+    
+            //RightFace
+            glNormal3d(0, 0, 1);
+            glVertex3f(-0.5f,  0.5f,  0.5f);
+            glVertex3f(-0.5f, -0.5f,  0.5f);
+            glVertex3f( 0.5f, -0.5f,  0.5f);
+            glVertex3f( 0.5f,  0.5f,  0.5f);
+    
+            //LeftFace
+            glNormal3d(0, 0, -1);
+            glVertex3f(-0.5f,  0.5f, -0.5f);
+            glVertex3f(-0.5f, -0.5f, -0.5f);
+            glVertex3f( 0.5f, -0.5f, -0.5f);
+            glVertex3f( 0.5f,  0.5f, -0.5f);
+        glEnd();
+    glPopMatrix();
+}
 void criaDefineTexturas(void){
     //----------------------------------------- Chao z=0
     glGenTextures(1, &textures[0]);
@@ -49,21 +161,36 @@ void criaDefineTexturas(void){
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
                  imag.ImageData());
+    
+    glGenTextures(1, &textures[1]);
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("ola.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
 }
 void init(void){
-    
     glClearColor(WHITE);
+    glEnable(GL_DEPTH_TEST);  //activa o zbuffer para ter em conta a profundidade
     glShadeModel(GL_SMOOTH);
-    criaDefineTexturas( );
+    criaDefineTexturas();
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glEnable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
+    
+    
     
 }
 void drawFloor(GLfloat comp, GLfloat larg){
     float scale = comp/2;
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D,textures[0]);
-    glColor4f(WHITE);
     glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f); glVertex3i( 0, 0, 0);
         glTexCoord2f(0.0f, scale); glVertex3i(0, 0, larg);
@@ -72,21 +199,58 @@ void drawFloor(GLfloat comp, GLfloat larg){
     glEnd();
     glDisable(GL_TEXTURE_2D);
 }
-
+void drawCanEngine(){
+    glPushMatrix();
+        if(canWalk[0]>20)
+            canWalk[0]=5;
+        glTranslatef(5,1,canWalk[0]);
+        canWalk[0]+=0.02;
+        glRotatef(-90, 1,0,0);
+        draw_cylinder(0.3, 1.0, 255, 160, 100);
+    glPopMatrix();
+    
+    glPushMatrix();
+        if(canWalk[1]>20)
+            canWalk[1]=5;
+        glTranslatef(canWalk[1],0,20);
+        canWalk[1]+=0.02;
+        glRotatef(-90, 1,0,0);
+        draw_cylinder(0.3, 1.0, 255, 160, 100);
+    glPopMatrix();
+    
+    glPushMatrix();
+        if(canWalk[2]<5)
+            canWalk[2]=20;
+        glTranslatef(20,1,canWalk[2]);
+        canWalk[2]-=0.02;
+        glRotatef(-90, 1,0,0);
+        draw_cylinder(0.3, 1.0, 255, 160, 100);
+    glPopMatrix();
+    
+    glutPostRedisplay();
+}
 
 void drawScene(void){
     //Desenha chão
     glDisable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHTING);
     
-    drawFloor(20,20);
+    drawFloor(30,30);
+    
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+        drawCanEngine();
+    glPopMatrix();
+    
+    drawEixos();
 }
 void display(void){
     //Limpa buffers
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    
-    //Viewport2
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
     glEnable(GL_LIGHTING);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    //glEnable(GL_LIGHTING);
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -101,7 +265,6 @@ void display(void){
     
     
     //Desenha "cena"
-    //iluminacao();
     drawScene();
     
     //Atualiza
@@ -113,34 +276,34 @@ void keyboard(unsigned char key, int x, int y){
     switch (key) {
         case 'w':
         case 'W':
-            obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
-            obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
+            obsPini[0]=(obsPini[0]-incVisao*cos(aVisao));
+            obsPini[2]=(obsPini[2]+incVisao*sin(aVisao));
             
-            obsPfin[0]=(obsPini[0]+rVisao*cos(aVisao));
-            obsPfin[2]=(obsPini[2]-rVisao*sin(aVisao));
+            obsPfin[0]=(obsPini[0]-rVisao*cos(aVisao));
+            obsPfin[2]=(obsPini[2]+rVisao*sin(aVisao));
             glutPostRedisplay();
             break;
         case 's':
         case 'S':
-            obsPini[0]=(obsPini[0]-incVisao*cos(aVisao));
-            obsPini[2]=(obsPini[2]+incVisao*sin(aVisao));
+            obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
+            obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
             
-            obsPfin[0]=(obsPini[0]+rVisao*cos(aVisao));
-            obsPfin[2]=(obsPini[2]-rVisao*sin(aVisao));
+            obsPfin[0]=(obsPini[0]-rVisao*cos(aVisao));
+            obsPfin[2]=(obsPini[2]+rVisao*sin(aVisao));
             glutPostRedisplay();
             break;
         case 'a':
         case 'A':
             aVisao=aVisao+0.05;
-            obsPfin[0]=obsPini[0]+rVisao*cos(aVisao);
-            obsPfin[2]=obsPini[2]-rVisao*sin(aVisao);
+            obsPfin[0]=obsPini[0]-rVisao*cos(aVisao);
+            obsPfin[2]=obsPini[2]+rVisao*sin(aVisao);
             glutPostRedisplay();
             break;
         case 'd':
         case 'D':
             aVisao=aVisao-0.05;
-            obsPfin[0]=obsPini[0]+rVisao*cos(aVisao);
-            obsPfin[2]=obsPini[2]-rVisao*sin(aVisao);
+            obsPfin[0]=obsPini[0]-rVisao*cos(aVisao);
+            obsPfin[2]=obsPini[2]+rVisao*sin(aVisao);
             glutPostRedisplay();
             break;
         case 27:
