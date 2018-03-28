@@ -36,12 +36,12 @@ GLUquadricObj *quadratic;
 GLfloat  rVisao=3.0, aVisao=0.5*PI, incVisao=0.2;
 
 //Posição inicial do observador
-GLfloat  obsPini[] ={10, 2, 2};
+GLfloat  obsPini[] ={10, 3, 2};
 GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1], obsPini[2]+rVisao*sin(aVisao)};
 
 //Identificador das Texturas
 RgbImage imag;
-GLuint textures[2];
+GLuint textures[10];
 
 void drawEixos()
 {
@@ -72,21 +72,26 @@ void draw_cylinder(GLfloat radius, GLfloat height, GLubyte R, GLubyte G, GLubyte
     GLfloat angle_stepsize = 0.1;
     
     /** Draw the tube */
+    //glEnable(GL_TEXTURE_2D);
+    //mglBindTexture(GL_TEXTURE_2D,textures[2]);
     glBegin(GL_QUAD_STRIP);
-    angle = 0.0;
-    while( angle < 2*PI ) {
-        x = radius * cos(angle);
-        y = radius * sin(angle);
-        glVertex3f(x, y , height);
-        glVertex3f(x, y , 0.0);
-        angle = angle + angle_stepsize;
-    }
-    glVertex3f(radius, 0.0, height);
-    glVertex3f(radius, 0.0, 0.0);
+        angle = 0.0;
+        while( angle < 2*PI ) {
+            x = radius * cos(angle);
+            y = radius * sin(angle);
+            glVertex3f(x, y , height);
+            glVertex3f(x, y , 0.0);
+            angle = angle + angle_stepsize;
+        }
+        glVertex3f(radius, 0.0, height);
+        glVertex3f(radius, 0.0, 0.0);
     glEnd();
     glDisable(GL_TEXTURE_2D);
     
+    
     /** Draw the circle on top of cylinder */
+    //glEnable(GL_TEXTURE_2D);
+    //glBindTexture(GL_TEXTURE_2D,textures[2]);
     glBegin(GL_POLYGON);
     angle = 0.0;
     while( angle < 2*PI ) {
@@ -97,6 +102,7 @@ void draw_cylinder(GLfloat radius, GLfloat height, GLubyte R, GLubyte G, GLubyte
     }
     glVertex3f(radius, 0.0, height);
     glEnd();
+    //glDisable(GL_TEXTURE_2D);
 }
 
 void drawCubo1(){
@@ -174,6 +180,19 @@ void criaDefineTexturas(void){
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
                  imag.ImageData());
+    
+    glGenTextures(1, &textures[2]);
+    glBindTexture(GL_TEXTURE_2D, textures[2]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("topcan.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
 }
 void init(void){
     glClearColor(WHITE);
@@ -212,7 +231,7 @@ void drawCanEngine(){
     glPushMatrix();
         if(canWalk[1]>20)
             canWalk[1]=5;
-        glTranslatef(canWalk[1],0,20);
+        glTranslatef(canWalk[1],1,20);
         canWalk[1]+=0.02;
         glRotatef(-90, 1,0,0);
         draw_cylinder(0.3, 1.0, 255, 160, 100);
