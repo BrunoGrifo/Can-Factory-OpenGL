@@ -291,8 +291,16 @@ void updateKeys(){
         obsPfin[2]=obsPini[2]+rVisao*sin(aVisao);
 	}
 	if(pressed[4]==1){
-		aVisaoY+=0.1;
-		obsPfin[1]=obsPini[1]-rVisao*sin(aVisaoY);
+		if(aVisaoY<20){
+			aVisaoY+=0.05;
+			obsPfin[1]=obsPini[1]+aVisaoY;
+		}
+	}
+	if(pressed[5]==1){
+		if(aVisaoY>-20){
+			aVisaoY-=0.05;
+			obsPfin[1]=obsPini[1]+aVisaoY;
+		}
 	}
 	glutPostRedisplay();
 }
