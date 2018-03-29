@@ -24,6 +24,8 @@ GLfloat luzAmbiente[4] = { 1,1,1,1 };
 //
 int w=0,s=0,d=0,a=0;
 
+int pressed[6] = {0,0,0,0,0,0}; //moves
+
 GLint        wScreen=800, hScreen=600;        //.. janela (pixeis)
 
 //Coordenadas da lata
@@ -33,11 +35,11 @@ GLUquadricObj *quadratic;
 
 
 //Parametros de visao do observador
-GLfloat  rVisao=3.0, aVisao=0.5*PI, incVisao=0.2;
+GLfloat  rVisao=3.0, aVisao=0.5*PI, incVisao=0.1, aVisaoY=0;
 
 //Posição inicial do observador
 GLfloat  obsPini[] ={10, 3, 2};
-GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1], obsPini[2]+rVisao*sin(aVisao)};
+GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1]+rVisao*sin(aVisaoY), obsPini[2]+rVisao*sin(aVisao)};
 
 //Identificador das Texturas
 RgbImage imag;
@@ -263,6 +265,37 @@ void drawScene(void){
     
     drawEixos();
 }
+void updateKeys(){
+	if(pressed[0]==1){
+		obsPini[0]=(obsPini[0]-incVisao*cos(aVisao));
+        obsPini[2]=(obsPini[2]+incVisao*sin(aVisao));
+       
+        obsPfin[0]=(obsPini[0]-rVisao*cos(aVisao));
+        obsPfin[2]=(obsPini[2]+rVisao*sin(aVisao));
+	}
+	if(pressed[1]==1){
+		obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
+		obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
+            
+		obsPfin[0]=(obsPini[0]-rVisao*cos(aVisao));
+		obsPfin[2]=(obsPini[2]+rVisao*sin(aVisao));
+	}
+	if(pressed[2]==1){
+		aVisao=aVisao+0.05;
+        obsPfin[0]=obsPini[0]-rVisao*cos(aVisao);
+        obsPfin[2]=obsPini[2]+rVisao*sin(aVisao);
+	}
+	if(pressed[3]==1){
+		aVisao=aVisao-0.05;
+        obsPfin[0]=obsPini[0]-rVisao*cos(aVisao);
+        obsPfin[2]=obsPini[2]+rVisao*sin(aVisao);
+	}
+	if(pressed[4]==1){
+		aVisaoY+=0.1;
+		obsPfin[1]=obsPini[1]-rVisao*sin(aVisaoY);
+	}
+	glutPostRedisplay();
+}
 void display(void){
     //Limpa buffers
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
@@ -279,6 +312,8 @@ void display(void){
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
+    updateKeys();
+
     //Posição do observador
     gluLookAt(obsPini[0], obsPini[1], obsPini[2], obsPfin[0], obsPfin[1], obsPfin[2], 0, 1, 0);
     
@@ -290,41 +325,66 @@ void display(void){
     glutSwapBuffers();
 }
 
-void keyboard(unsigned char key, int x, int y){
+
+void keyboardUp(unsigned char key, int x, int y){
     
     switch (key) {
         case 'w':
         case 'W':
-            obsPini[0]=(obsPini[0]-incVisao*cos(aVisao));
-            obsPini[2]=(obsPini[2]+incVisao*sin(aVisao));
-            
-            obsPfin[0]=(obsPini[0]-rVisao*cos(aVisao));
-            obsPfin[2]=(obsPini[2]+rVisao*sin(aVisao));
-            glutPostRedisplay();
+        	pressed[0]=0;
             break;
         case 's':
         case 'S':
-            obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
-            obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
-            
-            obsPfin[0]=(obsPini[0]-rVisao*cos(aVisao));
-            obsPfin[2]=(obsPini[2]+rVisao*sin(aVisao));
-            glutPostRedisplay();
+        	pressed[1]=0;
             break;
         case 'a':
         case 'A':
-            aVisao=aVisao+0.05;
-            obsPfin[0]=obsPini[0]-rVisao*cos(aVisao);
-            obsPfin[2]=obsPini[2]+rVisao*sin(aVisao);
-            glutPostRedisplay();
+        	pressed[2]=0;
             break;
         case 'd':
         case 'D':
-            aVisao=aVisao-0.05;
-            obsPfin[0]=obsPini[0]-rVisao*cos(aVisao);
-            obsPfin[2]=obsPini[2]+rVisao*sin(aVisao);
-            glutPostRedisplay();
+        	pressed[3]=0;
             break;
+        case 'o':
+        case 'O':
+        	pressed[4]=0;
+        	break;
+        case 'l':
+        case 'L':
+        	pressed[5]=0;
+        	break;
+        case 27:
+            exit(0);
+            break;
+    }
+}
+void keyboardDown(unsigned char key, int x, int y){
+    
+    switch (key) {
+        case 'w':
+        case 'W':
+        	pressed[0]=1;
+            break;
+        case 's':
+        case 'S':
+        	pressed[1]=1;
+            break;
+        case 'a':
+        case 'A':
+        	pressed[2]=1;
+            break;
+        case 'd':
+        case 'D':
+        	pressed[3]=1;
+            break;
+        case 'o':
+        case 'O':
+        	pressed[4]=1;
+        	break;
+        case 'l':
+        case 'L':
+        	pressed[5]=1;
+        	break;
         case 27:
             exit(0);
             break;
@@ -344,7 +404,8 @@ int main(int argc, char** argv){
     init();
     
     //glutReshapeFunc(resize);
-    glutKeyboardFunc(keyboard);
+    glutKeyboardFunc(keyboardDown);
+    glutKeyboardUpFunc(keyboardUp);
     glutDisplayFunc(display);
     
     
