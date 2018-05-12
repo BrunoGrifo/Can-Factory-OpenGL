@@ -38,12 +38,12 @@ GLUquadricObj *quadratic;
 GLfloat  rVisao=3.0, aVisao=0.5*PI, incVisao=0.1, aVisaoY=0;
 
 //Posição inicial do observador
-GLfloat  obsPini[] ={10, 3, 2};
+GLfloat  obsPini[] ={10, 3.5, 2};
 GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1]+rVisao*sin(aVisaoY), obsPini[2]+rVisao*sin(aVisao)};
 
 //Identificador das Texturas
 RgbImage imag;
-GLuint textures[8];
+GLuint textures[20];
 
 void draw_cylinder(GLfloat radius, GLfloat height, GLubyte R, GLubyte G, GLubyte B){  //Fui buscar à net
     GLfloat x              = 0.0;
@@ -70,8 +70,7 @@ void draw_cylinder(GLfloat radius, GLfloat height, GLubyte R, GLubyte G, GLubyte
     
     
     /** Draw the circle on top of cylinder */
-    //glEnable(GL_TEXTURE_2D);
-    //glBindTexture(GL_TEXTURE_2D,textures[2]);
+    
     glBegin(GL_POLYGON);
     angle = 0.0;
     while( angle < 2*PI ) {
@@ -82,7 +81,7 @@ void draw_cylinder(GLfloat radius, GLfloat height, GLubyte R, GLubyte G, GLubyte
     }
     glVertex3f(radius, 0.0, height);
     glEnd();
-    //glDisable(GL_TEXTURE_2D);
+   
 }
 
 
@@ -143,85 +142,50 @@ void drawWall(float comp, float alt, float larg, int d,int index){
 }
 void drawHouse(){
     glPushMatrix();
-		drawWall(30,10,0.2,10,1);
+		drawWall(25,1.5,0.2,10,11);
 	glPopMatrix();
+    glPushMatrix();
+        glTranslatef(0,0,0.2);
+		drawWall(0.8,10,0.8,1,11);
+	glPopMatrix();
+
 
     glPushMatrix();
 		glRotatef(-90,0,1,0);
-		drawWall(30,10,0.2,10,1);
+		drawWall(25,1.5,0.2,10,11);
+	glPopMatrix();
+    glPushMatrix();
+		glTranslatef(24,0,0.2);
+		drawWall(0.8,10,0.8,1,11);
 	glPopMatrix();
 
     glPushMatrix();
-		glTranslatef(0,0,30);
-		drawWall(30,10,0.2,10,1);
+		glTranslatef(0,0,25);
+		drawWall(25,1.5,0.2,10,11);
+	glPopMatrix();
+    glPushMatrix();
+		glTranslatef(0,0,24.2);
+		drawWall(0.8,10,0.8,1,11);
 	glPopMatrix();
 
     glPushMatrix();
-		glTranslatef(30,0,0);
+		glTranslatef(25,0,0);
         glRotatef(-90,0,1,0);
-		drawWall(30,10,0.2,10,1);
+		drawWall(25.2,1.5,0.2,10,11);
+	glPopMatrix();
+    glPushMatrix();
+		glTranslatef(24,0,24.2);
+		drawWall(0.8,10,0.8,1,11);
 	glPopMatrix();
 
 
-
-
-
-
+    //roof
     glPushMatrix();
-        glTranslatef(0,10,30);
+        glTranslatef(0,10,25);
         glRotatef(-90,1,0,0);
-		drawWall(30,30,0.2,20,7);
+		drawWall(25,25,0.2,20,7);
 	glPopMatrix();
-
 }
-/*void drawCubo1(){
-    glPushMatrix();
-    
-        glBegin(GL_QUADS);
-            //UpperFace
-            glNormal3d(0, 1, 0);
-            glVertex3f( 0.5f,  0.5f, -0.5f);
-            glVertex3f(-0.5f,  0.5f, -0.5f);
-            glVertex3f(-0.5f,  0.5f,  0.5f);
-            glVertex3f( 0.5f,  0.5f,  0.5f);
-    
-            //BottomFace
-            glNormal3d(0, -1, 0);
-            glVertex3f( 0.5f, -0.5f, -0.5f);
-            glVertex3f( 0.5f, -0.5f,  0.5f);
-            glVertex3f(-0.5f, -0.5f,  0.5f);
-            glVertex3f(-0.5f, -0.5f, -0.5f);
-    
-            //FrontFace
-            glNormal3d(-1, 0, 0);
-            glVertex3f(-0.5f,  0.5f, -0.5f);
-            glVertex3f(-0.5f, -0.5f, -0.5f);
-            glVertex3f(-0.5f, -0.5f,  0.5f);
-            glVertex3f(-0.5f,  0.5f,  0.5f);
-    
-            //BackFace
-            glNormal3d(1, 0, 0);
-            glVertex3f( 0.5f,  0.5f,  0.0f);
-            glVertex3f( 0.5f,  0.0f,  0.0f);
-            glVertex3f( 0.5f,  0.0f,  0.5f);
-            glVertex3f( 0.5f,  0.5f,  0.5f);
-    
-            //RightFace
-            glNormal3d(0, 0, 1);
-            glVertex3f(-0.5f,  0.5f,  0.5f);
-            glVertex3f(-0.5f, -0.5f,  0.5f);
-            glVertex3f( 0.5f, -0.5f,  0.5f);
-            glVertex3f( 0.5f,  0.5f,  0.5f);
-    
-            //LeftFace
-            glNormal3d(0, 0, -1);
-            glVertex3f(-0.5f,  0.5f, -0.5f);
-            glVertex3f(-0.5f, -0.5f, -0.5f);
-            glVertex3f( 0.5f, -0.5f, -0.5f);
-            glVertex3f( 0.5f,  0.5f, -0.5f);
-        glEnd();
-    glPopMatrix();
-}*/
 void criaDefineTexturas(void){
     //----------------------------------------- Chao z=0
     glGenTextures(1, &textures[0]);
@@ -327,6 +291,58 @@ void criaDefineTexturas(void){
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
                  imag.ImageData());
+
+    glGenTextures(1, &textures[8]);
+    glBindTexture(GL_TEXTURE_2D, textures[8]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("coca.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
+
+    glGenTextures(1, &textures[9]);
+    glBindTexture(GL_TEXTURE_2D, textures[9]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("topcan.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
+    
+    glGenTextures(1, &textures[10]);
+    glBindTexture(GL_TEXTURE_2D, textures[10]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("metal2.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
+
+    glGenTextures(1, &textures[11]);
+    glBindTexture(GL_TEXTURE_2D, textures[11]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("tijolo.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
 }
 void init(void){
     glClearColor(WHITE);
@@ -353,31 +369,34 @@ void drawFloor(GLfloat comp, GLfloat larg){
     glDisable(GL_TEXTURE_2D);
 }
 void drawCanEngine(){
+    //glEnable(GL_TEXTURE_2D);
+    //glBindTexture(GL_TEXTURE_2D, textures[8]);
     glPushMatrix();
         if(canWalk[0]>20)
             canWalk[0]=5;
-        glTranslatef(5,1,canWalk[0]);
+        glTranslatef(5.1,1.3,canWalk[0]);
         canWalk[0]+=0.02;
         glRotatef(-90, 1,0,0);
-        draw_cylinder(0.3, 1.0, 255, 160, 100);
+        draw_cylinder(0.2,0.8, 255, 160, 100);
     glPopMatrix();
+    //glDisable(GL_TEXTURE_2D);
     
     glPushMatrix();
         if(canWalk[1]>20)
             canWalk[1]=5;
-        glTranslatef(canWalk[1],1,20);
+        glTranslatef(canWalk[1],1.3,20.1);
         canWalk[1]+=0.02;
         glRotatef(-90, 1,0,0);
-        draw_cylinder(0.3, 1.0, 255, 160, 100);
+        draw_cylinder(0.2,0.8, 255, 160, 100);
     glPopMatrix();
     
     glPushMatrix();
         if(canWalk[2]<5)
             canWalk[2]=20;
-        glTranslatef(20,1,canWalk[2]);
+        glTranslatef(20.1,1.3,canWalk[2]);
         canWalk[2]-=0.02;
         glRotatef(-90, 1,0,0);
-        draw_cylinder(0.3, 1.0, 255, 160, 100);
+        draw_cylinder(0.2,0.8, 255, 160, 100);
     glPopMatrix();
     
     glutPostRedisplay();
@@ -388,7 +407,7 @@ void drawScene(void){
     glDisable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHTING);
     
-    drawFloor(30,30);
+    drawFloor(25,25);
     
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
@@ -440,8 +459,8 @@ void drawSkybox(float size){
     size = size/2.0f;
     
     glEnable(GL_TEXTURE_2D);
-    //Left
-    glBindTexture(GL_TEXTURE_2D,textures[2]);
+
+    glBindTexture(GL_TEXTURE_2D,textures[5]);
     glPushMatrix();
     
     glBegin(GL_QUADS);
@@ -453,8 +472,8 @@ void drawSkybox(float size){
     
     glPopMatrix();
     
-    //Front
-    glBindTexture(GL_TEXTURE_2D,textures[4]);
+
+    glBindTexture(GL_TEXTURE_2D,textures[3]);
     glPushMatrix();
     
     glBegin(GL_QUADS);
@@ -466,8 +485,8 @@ void drawSkybox(float size){
     
     glPopMatrix();
     
-    //Right
-    glBindTexture(GL_TEXTURE_2D,textures[3]);
+
+    glBindTexture(GL_TEXTURE_2D,textures[4]);
     glPushMatrix();
     
     glBegin(GL_QUADS);
@@ -479,8 +498,8 @@ void drawSkybox(float size){
     
     glPopMatrix();
     
-    //Back
-    glBindTexture(GL_TEXTURE_2D,textures[5]);
+
+    glBindTexture(GL_TEXTURE_2D,textures[2]);
     glPushMatrix();
     
     glBegin(GL_QUADS);
@@ -492,7 +511,6 @@ void drawSkybox(float size){
     
     glPopMatrix();
     
-    //Top
     glBindTexture(GL_TEXTURE_2D,textures[6]);
     glPushMatrix();
     
@@ -504,6 +522,149 @@ void drawSkybox(float size){
     glEnd();
     
     glPopMatrix();
+
+    //Bottom
+    glBindTexture(GL_TEXTURE_2D,textures[1]);
+    glPushMatrix();
+    
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,0.0f); glVertex3i(obsPini[0]-size,obsPini[1]-size,obsPini[2]-size);
+    glTexCoord2f(1.0f,0.0f); glVertex3i(obsPini[0]-size,obsPini[1]-size,obsPini[2]-size);
+    glTexCoord2f(1.0f,1.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]-size);
+    glTexCoord2f(0.0f,1.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]-size);
+    glEnd();
+    
+    glPopMatrix();
+    
+}
+void drawConveyor(){
+
+    // -----------------------PRIMEIRA LATA --------------------- PATH
+    //lado esquerdo
+    glPushMatrix();
+        glTranslatef(5.5,0,5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(5.5,0,10);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(5.5,0,15);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(5.5,0,19.4);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+    //lado direito
+    glPushMatrix();
+        glTranslatef(4.5,0,5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(4.5,0,10);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(4.5,0,15);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(4.5,0,20.5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+    //topo
+    glPushMatrix();
+        glTranslatef(4.5,1,5);
+        drawBlock(1.2,0.2,15.7,10);
+    glPopMatrix();
+
+
+
+    // -----------------------SEGUNDA LATA --------------------- PATH
+    //lado esquerdo
+    glPushMatrix();
+        glTranslatef(10,0,20.5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(15,0,20.5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+    //lado direito
+
+    glPushMatrix();
+        glTranslatef(10,0,19.5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(15,0,19.5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+    
+    //topo
+    glPushMatrix();
+        glTranslatef(5,1,20.7);
+        glRotatef(90,0,1,0);
+        drawBlock(1.2,0.2,15.6,10);
+    glPopMatrix();
+
+    // -----------------------TERCEIRA LATA --------------------- PATH
+    //lado esquerdo
+    glPushMatrix();
+        glTranslatef(19.5,0,5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(19.5,0,10);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(19.5,0,15);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(19.5,0,19.4);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+    //lado direito
+    glPushMatrix();
+        glTranslatef(20.5,0,5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(20.5,0,10);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(20.5,0,15);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(20.5,0,20.5);
+        drawBlock(0.2,1,0.2,10);
+    glPopMatrix();
+    //topo
+    glPushMatrix();
+        glTranslatef(19.5,1,5);
+        drawBlock(1.2,0.2,15.7,10);
+    glPopMatrix();
+
     
 }
 
@@ -535,8 +696,9 @@ void display(void){
     
     //Desenha "cena"
     drawScene();
+    drawConveyor();
     drawHouse();
-    drawSkybox(50.0f);
+    drawSkybox(100.0f);
     //Atualiza
     glutSwapBuffers();
 }
