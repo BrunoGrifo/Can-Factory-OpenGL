@@ -19,7 +19,7 @@
 #define PI       3.14159
 
 
-GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 }, preto[] = { 0 ,0 ,0 }, azul [] = {0, 0, 1};
+GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 }, preto[] = { 0 ,0 ,0 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ;
 GLfloat luzAmbiente[4] = { 1,1,1,1 };
 //
 int w=0,s=0,d=0,a=0;
@@ -328,7 +328,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("metal2.bmp");
+    imag.LoadBmpFile("metal3.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -355,6 +355,19 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     imag.LoadBmpFile("canfloor.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
+
+    glGenTextures(1, &textures[13]);
+    glBindTexture(GL_TEXTURE_2D, textures[13]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("capa.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -387,33 +400,39 @@ void drawFloor(GLfloat comp, GLfloat larg){
 void drawCanEngine(){
     //glEnable(GL_TEXTURE_2D);
     //glBindTexture(GL_TEXTURE_2D, textures[8]);
-    glPushMatrix();
-        if(canWalk[0]>20)
-            canWalk[0]=5;
-        glTranslatef(5.1,1.3,canWalk[0]);
-        canWalk[0]+=0.02;
-        glRotatef(-90, 1,0,0);
-        draw_cylinder(0.2,0.8, 255, 160, 100);
-    glPopMatrix();
+    for(int i=0;i<15;i++){
+        glPushMatrix();
+            glTranslatef(5.1,1.3,canWalk[0]+i);
+            glRotatef(-90, 1,0,0);
+            draw_cylinder(0.2,0.8, 255, 160, 100);
+        glPopMatrix();
+    }
+    canWalk[0]+=0.02;
+    if(canWalk[0]>6)
+        canWalk[0]=5;
+
     //glDisable(GL_TEXTURE_2D);
+    for(int i=0;i<15;i++){
+        glPushMatrix();
+            glTranslatef(canWalk[1]+i,1.3,20.1);
+            glRotatef(-90, 1,0,0);
+            draw_cylinder(0.2,0.8, 255, 160, 100);
+        glPopMatrix();
+    }
+    canWalk[1]+=0.02;
+    if(canWalk[1]>6)
+        canWalk[1]=5;
     
-    glPushMatrix();
-        if(canWalk[1]>20)
-            canWalk[1]=5;
-        glTranslatef(canWalk[1],1.3,20.1);
-        canWalk[1]+=0.02;
-        glRotatef(-90, 1,0,0);
-        draw_cylinder(0.2,0.8, 255, 160, 100);
-    glPopMatrix();
-    
-    glPushMatrix();
-        if(canWalk[2]<4)
-            canWalk[2]=20;
-        glTranslatef(20.1,1.3,canWalk[2]);
-        canWalk[2]-=0.02;
-        glRotatef(-90, 1,0,0);
-        draw_cylinder(0.2,0.8, 255, 160, 100);
-    glPopMatrix();
+    for(int i=0;i<15;i++){
+        glPushMatrix();
+            glTranslatef(20.1,1.3,canWalk[2]-i);
+            glRotatef(-90, 1,0,0);
+            draw_cylinder(0.2,0.8, 255, 160, 100);
+        glPopMatrix();
+    }
+    canWalk[2]-=0.02;
+    if(canWalk[2]<19)
+        canWalk[2]=20;
     
     glutPostRedisplay();
 }
@@ -600,7 +619,7 @@ void drawSkybox(float size){
     
 }
 void drawConveyor(){
-
+    
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_AMBIENT, azul);
         glTranslatef(4.1,0,0.2);
@@ -614,16 +633,68 @@ void drawConveyor(){
     glPopMatrix();
 
 
+    //Secções de transformação
+    //Primeira secção
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
         glTranslatef(4.5,1.25,19.5);
         drawBlock(1.2,2,1.2,-1);
     glPopMatrix();
+    //capa de vermelho
+    
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+        glTranslatef(4.3,2.3,19.3);
+        drawBlock(1.6,2,1.6,13);
+    glPopMatrix();
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+        glTranslatef(4.3,1.25,19.3);
+        drawBlock(0.4,1.1,0.2,13);
+    glPopMatrix();
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+        glTranslatef(5.5,1.25,19.3);
+        drawBlock(0.4,1.1,0.4,13);
+    glPopMatrix();
 
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+        glTranslatef(5.7,1.25,20.5);
+        drawBlock(0.2,1.1,0.4,13);
+    glPopMatrix();
+
+
+
+    //Asegunda secção
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
         glTranslatef(19.5,1.25,19.5);
         drawBlock(1.2,2,1.2,-1);
+    glPopMatrix();
+
+    //capa de vermelho
+    
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+        glTranslatef(19.3,2.3,19.3);
+        drawBlock(1.6,2,1.6,13);
+    glPopMatrix();
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+        glTranslatef(20.5,1.25,19.3);
+        drawBlock(0.4,1.1,0.2,13);
+    glPopMatrix();
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+        glTranslatef(19.3,1.25,19.3);
+        drawBlock(0.4,1.1,0.4,13);
+    glPopMatrix();
+
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+        glTranslatef(19.3,1.25,20.5);
+        drawBlock(0.2,1.1,0.4,13);
     glPopMatrix();
 
     // -----------------------PRIMEIRA LATA --------------------- PATH
@@ -748,8 +819,8 @@ void drawConveyor(){
     glPopMatrix();
     //topo
     glPushMatrix();
-        glTranslatef(19.5,1,5);
-        drawBlock(1.2,0.2,15.7,10);
+        glTranslatef(19.5,1,4.5);
+        drawBlock(1.2,0.2,16.2,10);
     glPopMatrix();
 
     
