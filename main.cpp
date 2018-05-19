@@ -176,89 +176,54 @@ void drawBlock(float comp, float alt, float larg, int textID){
 		    glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 }
-void drawWall(float comp, float alt, float larg, int d,int index){
+void drawWall(float comp, float alt, float larg, int d,int index,int window){
 	float i,j;
 	int dAlt = roundf(d/(comp/alt));
 
 	for(j=0.0f;j<dAlt;j++){
 		for(i=0.0f;i<d;i++){
-			glPushMatrix();
-				glTranslatef((comp/d)*i,(alt/dAlt)*j,0.0f);
-				drawBlock(comp/d,alt/dAlt,larg,index);
-			glPopMatrix();
+            if(window==1){
+                if((j==1 && i==3) || (j==1 && i==6) || (j==1 && i==7) || (j==1 && i==2)){
+                    continue;
+                }else{
+                    glPushMatrix();
+                        glTranslatef((comp/d)*i,(alt/dAlt)*j,0.0f);
+                        drawBlock(comp/d,alt/dAlt,larg,index);
+                    glPopMatrix();
+                }
+            }else{
+                glPushMatrix();
+                    glTranslatef((comp/d)*i,(alt/dAlt)*j,0.0f);
+                    drawBlock(comp/d,alt/dAlt,larg,index);
+                glPopMatrix();
+            }
 		}
 	}
 }
-/*
+
 void drawHouse(){
     glPushMatrix();
-		drawWall(25,1.5,0.2,10,11);
-	glPopMatrix();
-    glPushMatrix();
-        glTranslatef(0,0,0.2);
-		drawWall(0.8,10,0.8,1,11);
-	glPopMatrix();
-
-
-    glPushMatrix();
-		glRotatef(-90,0,1,0);
-		drawWall(25,1.5,0.2,10,11);
-	glPopMatrix();
-    glPushMatrix();
-		glTranslatef(24,0,0.2);
-		drawWall(0.8,10,0.8,1,11);
-	glPopMatrix();
-
-    glPushMatrix();
-		glTranslatef(0,0,25);
-		drawWall(25,1.5,0.2,10,11);
-	glPopMatrix();
-    glPushMatrix();
-		glTranslatef(0,0,24.2);
-		drawWall(0.8,10,0.8,1,11);
-	glPopMatrix();
-
-    glPushMatrix();
-		glTranslatef(25,0,0);
-        glRotatef(-90,0,1,0);
-		drawWall(25.2,1.5,0.2,10,11);
-	glPopMatrix();
-    glPushMatrix();
-		glTranslatef(24,0,24.2);
-		drawWall(0.8,10,0.8,1,11);
-	glPopMatrix();
-
-
-    //roof
-    glPushMatrix();
-        glTranslatef(0,10,25);
-        glRotatef(-90,1,0,0);
-		drawWall(25,25,0.2,20,7);
-	glPopMatrix();
-}*/
-void drawHouse(){
-    glPushMatrix();
-		drawWall(25,10,0.2,10,14);
+		drawWall(25,10,0.2,10,14,1);
 	glPopMatrix();
 
 
 
     glPushMatrix();
 		glRotatef(-90,0,1,0);
-		drawWall(25,10,0.2,10,14);
+		drawWall(25,10,0.2,10,14,0);
 	glPopMatrix();
 
 
     glPushMatrix();
 		glTranslatef(0,0,25);
-		drawWall(25,10,0.2,10,14);
+		drawWall(25,10,0.2,10,14,1);
 	glPopMatrix();
 
 
     glPushMatrix();
 		glTranslatef(25,0,0);
         glRotatef(-90,0,1,0);
-		drawWall(25.2,10,0.2,10,14);
+		drawWall(25.2,10,0.2,10,14,0);
 	glPopMatrix();
 
 
@@ -267,7 +232,7 @@ void drawHouse(){
     glPushMatrix();
         glTranslatef(0,10,25);
         glRotatef(-90,1,0,0);
-		drawWall(25,25,0.2,20,7);
+		drawWall(25,25,0.2,20,7,0);
 	glPopMatrix();
 }
 void criaDefineTexturas(void){
@@ -651,21 +616,54 @@ void drawDetails(){
     glPopMatrix();
 
     //prateleiras
+    //parede direita
     glPushMatrix();
-        glTranslatef(0.01,5.5,3.25);
+        glTranslatef(0.01,5,3.25);
         drawBlock(0.6,0.2,5,17);
     glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,4.5,3.3);
+            glRotatef(-45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,4.5,8.1);
+            glRotatef(-45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
 
+    
      glPushMatrix();
-        glTranslatef(0.01,2.19,9.25);
+        glTranslatef(0.01,2.2,9.25);
         drawBlock(0.6,0.2,5,17);
     glPopMatrix();
-
+        glPushMatrix();
+            glTranslatef(0,1.7,9.3);
+            glRotatef(-45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,1.7,14.1);
+            glRotatef(-45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+    
      glPushMatrix();
-        glTranslatef(0.01,5.5,15.25);
+        glTranslatef(0.01,5,15.25);
         drawBlock(0.6,0.2,5,17);
     glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,4.5,15.3);
+            glRotatef(-45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,4.5,20.1);
+            glRotatef(-45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
 
+    //parede frente
 
 
 }
