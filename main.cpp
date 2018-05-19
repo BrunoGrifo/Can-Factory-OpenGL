@@ -44,44 +44,90 @@ GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1]+rVisao*sin(aVisao
 
 //Identificador das Texturas
 RgbImage imag;
-GLuint textures[20];
+GLuint textures[25];
 
-void draw_cylinder(GLfloat radius, GLfloat height, GLubyte R, GLubyte G, GLubyte B){  //Fui buscar à net
-    GLfloat x              = 0.0;
-    GLfloat y              = 0.0;
-    GLfloat angle          = 0.0;
-    GLfloat angle_stepsize = 0.1;
-    
-    /** Draw the tube */
-    //glEnable(GL_TEXTURE_2D);
-    //mglBindTexture(GL_TEXTURE_2D,textures[2]);
-    glBegin(GL_QUAD_STRIP);
-        angle = 0.0;
-        while( angle < 2*PI ) {
-            x = radius * cos(angle);
-            y = radius * sin(angle);
-            glVertex3f(x, y , height);
-            glVertex3f(x, y , 0.0);
-            angle = angle + angle_stepsize;
-        }
-        glVertex3f(radius, 0.0, height);
-        glVertex3f(radius, 0.0, 0.0);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    
-    
-    /** Draw the circle on top of cylinder */
-    
-    glBegin(GL_POLYGON);
-    angle = 0.0;
-    while( angle < 2*PI ) {
-        x = radius * cos(angle);
-        y = radius * sin(angle);
-        glVertex3f(x, y , height);
-        angle = angle + angle_stepsize;
+
+GLvoid draw_circle(const GLfloat radius,const GLuint num_vertex){
+  GLfloat vertex[4]; 
+  GLfloat texcoord[2];
+ 
+  const GLfloat delta_angle = 2.0*M_PI/num_vertex;
+ 
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D,textures[9]);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+  glBegin(GL_TRIANGLE_FAN);
+ 
+  //draw the vertex at the center of the circle
+  texcoord[0] = 0.5;
+  texcoord[1] = 0.5;
+  glTexCoord2fv(texcoord);
+ 
+  vertex[0] = vertex[1] = vertex[2] = 0.0;
+  vertex[3] = 1.0;        
+  glVertex4fv(vertex);
+ 
+  for(int i = 0; i < num_vertex ; i++)
+  {
+    texcoord[0] = (cos(delta_angle*i) + 1.0)*0.5;
+    texcoord[1] = (sin(delta_angle*i) + 1.0)*0.5;
+    glTexCoord2fv(texcoord);
+ 
+    vertex[0] = cos(delta_angle*i) * radius;
+    vertex[1] = sin(delta_angle*i) * radius;
+    vertex[2] = 0.0;
+    vertex[3] = 1.0;
+    glVertex4fv(vertex);
+  }
+ 
+  texcoord[0] = (1.0 + 1.0)*0.5;
+  texcoord[1] = (0.0 + 1.0)*0.5;
+  glTexCoord2fv(texcoord);
+ 
+  vertex[0] = 1.0 * radius;
+  vertex[1] = 0.0 * radius;
+  vertex[2] = 0.0;
+  vertex[3] = 1.0;
+  glVertex4fv(vertex);
+  glEnd();
+ 
+  glDisable(GL_TEXTURE_2D);
+ 
+}
+
+
+
+void draw_cylinder(int state_flag){  //Fui buscar à net
+    quadratic = gluNewQuadric();
+    if(state_flag==1){
+        gluCylinder(quadratic,0.2f,0.2f,0.8,15,15);
     }
-    glVertex3f(radius, 0.0, height);
-    glEnd();
+    if(state_flag==2){
+        gluCylinder(quadratic,0.2f,0.2f,0.8,15,15);
+        glPushMatrix();
+            glTranslatef(0,0,0.8);
+            draw_circle(0.2,30);
+        glPopMatrix();
+    }
+    if(state_flag==3){
+
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D,textures[8]);
+        glPushMatrix();
+            glRotatef(-90,0,0,1);
+            gluQuadricDrawStyle ( quadratic, GLU_FILL   );
+            gluQuadricNormals   ( quadratic, GLU_SMOOTH );
+            gluQuadricTexture   ( quadratic, GL_TRUE    );
+            gluCylinder(quadratic,0.2f,0.2f,0.8,10,10);
+            glTranslatef(0,0,0.8);
+            draw_circle(0.2,30); 
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+    }
+    
+    
+    
+
    
 }
 
@@ -143,6 +189,7 @@ void drawWall(float comp, float alt, float larg, int d,int index){
 		}
 	}
 }
+/*
 void drawHouse(){
     glPushMatrix();
 		drawWall(25,1.5,0.2,10,11);
@@ -188,6 +235,40 @@ void drawHouse(){
         glRotatef(-90,1,0,0);
 		drawWall(25,25,0.2,20,7);
 	glPopMatrix();
+}*/
+void drawHouse(){
+    glPushMatrix();
+		drawWall(25,10,0.2,10,14);
+	glPopMatrix();
+
+
+
+    glPushMatrix();
+		glRotatef(-90,0,1,0);
+		drawWall(25,10,0.2,10,14);
+	glPopMatrix();
+
+
+    glPushMatrix();
+		glTranslatef(0,0,25);
+		drawWall(25,10,0.2,10,14);
+	glPopMatrix();
+
+
+    glPushMatrix();
+		glTranslatef(25,0,0);
+        glRotatef(-90,0,1,0);
+		drawWall(25.2,10,0.2,10,14);
+	glPopMatrix();
+
+
+
+    //roof
+    glPushMatrix();
+        glTranslatef(0,10,25);
+        glRotatef(-90,1,0,0);
+		drawWall(25,25,0.2,20,7);
+	glPopMatrix();
 }
 void criaDefineTexturas(void){
     //----------------------------------------- Chao z=0
@@ -198,7 +279,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("chao.bmp");
+    imag.LoadBmpFile("textures/chao.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -211,7 +292,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("wall3.bmp");
+    imag.LoadBmpFile("textures/wall3.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -224,7 +305,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("lt.bmp");
+    imag.LoadBmpFile("textures/lt.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -237,7 +318,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("rt.bmp");
+    imag.LoadBmpFile("textures/rt.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -250,7 +331,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("ft.bmp");
+    imag.LoadBmpFile("textures/ft.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -263,7 +344,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("bk.bmp");
+    imag.LoadBmpFile("textures/bk.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -276,7 +357,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("up.bmp");
+    imag.LoadBmpFile("textures/up.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -289,7 +370,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("top1.bmp");
+    imag.LoadBmpFile("textures/top1.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -302,7 +383,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("coca.bmp");
+    imag.LoadBmpFile("textures/coca1.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -315,7 +396,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("topcan.bmp");
+    imag.LoadBmpFile("textures/topcan3.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -328,7 +409,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("metal3.bmp");
+    imag.LoadBmpFile("textures/metal3.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -341,7 +422,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("tijolo.bmp");
+    imag.LoadBmpFile("textures/tijolo.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -354,7 +435,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("canfloor.bmp");
+    imag.LoadBmpFile("textures/canfloor.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -367,7 +448,33 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("capa.bmp");
+    imag.LoadBmpFile("textures/capa.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
+
+    glGenTextures(1, &textures[14]);
+    glBindTexture(GL_TEXTURE_2D, textures[14]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("textures/par6.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
+
+    glGenTextures(1, &textures[15]);
+    glBindTexture(GL_TEXTURE_2D, textures[15]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("textures/chaosujo.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -385,6 +492,8 @@ void init(void){
     
     
 }
+
+
 void drawFloor(GLfloat comp, GLfloat larg){
     float scale = comp/2;
     glEnable(GL_TEXTURE_2D);
@@ -400,11 +509,11 @@ void drawFloor(GLfloat comp, GLfloat larg){
 void drawCanEngine(){
     //glEnable(GL_TEXTURE_2D);
     //glBindTexture(GL_TEXTURE_2D, textures[8]);
-    for(int i=0;i<15;i++){
+    for(int i=0;i<16;i++){
         glPushMatrix();
-            glTranslatef(5.1,1.3,canWalk[0]+i);
+            glTranslatef(5.1,1.3,canWalk[0]+i-0.5);
             glRotatef(-90, 1,0,0);
-            draw_cylinder(0.2,0.8, 255, 160, 100);
+            draw_cylinder(1);
         glPopMatrix();
     }
     canWalk[0]+=0.02;
@@ -416,18 +525,18 @@ void drawCanEngine(){
         glPushMatrix();
             glTranslatef(canWalk[1]+i,1.3,20.1);
             glRotatef(-90, 1,0,0);
-            draw_cylinder(0.2,0.8, 255, 160, 100);
+            draw_cylinder(2);
         glPopMatrix();
     }
     canWalk[1]+=0.02;
     if(canWalk[1]>6)
         canWalk[1]=5;
     
-    for(int i=0;i<15;i++){
+    for(int i=0;i<16;i++){
         glPushMatrix();
-            glTranslatef(20.1,1.3,canWalk[2]-i);
+            glTranslatef(20.1,1.3,canWalk[2]-i+0.5);
             glRotatef(-90, 1,0,0);
-            draw_cylinder(0.2,0.8, 255, 160, 100);
+            draw_cylinder(3);
         glPopMatrix();
     }
     canWalk[2]-=0.02;
@@ -436,15 +545,30 @@ void drawCanEngine(){
     
     glutPostRedisplay();
 }
+
+void drawStain(){
+    glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D,textures[15]);
+        glPushMatrix();
+            glBegin(GL_QUADS);
+                glTexCoord2f(0.0f,0.0f); glVertex3i(  1,  0, 0); 
+                glTexCoord2f(1.0f,0.0f); glVertex3i(     0,  0, 0);
+                glTexCoord2f(1.0f,1.0f); glVertex3i(     0, 1, 0);
+                glTexCoord2f(0.0f,1.0f); glVertex3i(  1, 1, 0);    
+            glEnd();
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+}
+
 void drawCanFloor(){
     glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D,textures[12]);
         glPushMatrix();
             glBegin(GL_QUADS);
-                glTexCoord2f(0.0f,0.0f); glVertex3i(  1,  0, 0);
+                glTexCoord2f(0.0f,0.0f); glVertex3i(  1,  0, 0); 
                 glTexCoord2f(1.0f,0.0f); glVertex3i(     0,  0, 0);
                 glTexCoord2f(1.0f,1.0f); glVertex3i(     0, 1, 0);
-                glTexCoord2f(0.0f,1.0f); glVertex3i(  1, 1, 0);
+                glTexCoord2f(0.0f,1.0f); glVertex3i(  1, 1, 0);    
             glEnd();
         glPopMatrix();
         glDisable(GL_TEXTURE_2D);
@@ -482,12 +606,19 @@ void drawCanFloorEngine(){
     glutPostRedisplay();
 }
 
+
 void drawScene(void){
     //Desenha chão
     glDisable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHTING);
     
     drawFloor(25,25);
+    glPushMatrix();
+        glTranslatef(6,0.05,17);
+        glScalef(2,1,2);
+        glRotatef(90,1,0,0);
+        drawStain();
+    glPopMatrix();
     
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
@@ -500,6 +631,19 @@ void updateKeys(){
 	if(pressed[0]==1){
 		obsPini[0]=(obsPini[0]-incVisao*cos(aVisao));
         obsPini[2]=(obsPini[2]+incVisao*sin(aVisao));
+        /*if(obsPini[0]>18.5){
+            obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
+        }
+        if(obsPini[2]>18.5){
+            obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
+        }
+
+        if(obsPini[0]<5){
+            obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
+        }
+        if(obsPini[2]<2){
+            obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
+        }*/
        
         obsPfin[0]=(obsPini[0]-rVisao*cos(aVisao));
         obsPfin[2]=(obsPini[2]+rVisao*sin(aVisao));
@@ -533,6 +677,7 @@ void updateKeys(){
 			obsPfin[1]=obsPini[1]+aVisaoY;
 		}
 	}
+
 	glutPostRedisplay();
 }
 void drawSkybox(float size){
