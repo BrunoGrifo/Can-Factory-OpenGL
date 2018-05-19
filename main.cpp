@@ -461,7 +461,7 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    imag.LoadBmpFile("textures/par6.bmp");
+    imag.LoadBmpFile("textures/par3.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -475,6 +475,32 @@ void criaDefineTexturas(void){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     imag.LoadBmpFile("textures/chaosujo.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
+    
+    glGenTextures(1, &textures[16]);
+    glBindTexture(GL_TEXTURE_2D, textures[16]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("textures/detail1.bmp");
+    glTexImage2D(GL_TEXTURE_2D, 0, 3,
+                 imag.GetNumCols(),
+                 imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 imag.ImageData());
+    
+    glGenTextures(1, &textures[17]);
+    glBindTexture(GL_TEXTURE_2D, textures[17]);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    imag.LoadBmpFile("textures/prateleira.bmp");
     glTexImage2D(GL_TEXTURE_2D, 0, 3,
                  imag.GetNumCols(),
                  imag.GetNumRows(), 0, GL_RGB, GL_UNSIGNED_BYTE,
@@ -546,9 +572,9 @@ void drawCanEngine(){
     glutPostRedisplay();
 }
 
-void drawStain(){
+void drawDetail(int index){
     glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D,textures[15]);
+        glBindTexture(GL_TEXTURE_2D,textures[index]);
         glPushMatrix();
             glBegin(GL_QUADS);
                 glTexCoord2f(0.0f,0.0f); glVertex3i(  1,  0, 0); 
@@ -605,20 +631,54 @@ void drawCanFloorEngine(){
 
     glutPostRedisplay();
 }
+void drawDetails(){
 
+    //chao
+    glPushMatrix();
+        glTranslatef(7.995,0.001,19.62);
+        glScalef(1.99,1,1.99);
+        glRotatef(90,1,0,0);
+        glRotatef(180,0,0,1);
+        drawDetail(15);
+    glPopMatrix();
+    
+    //Parede
+    glPushMatrix();
+        glTranslatef(0.01,2.19,3.25);
+        glScalef(1,2.5,2.5);
+        glRotatef(-90,0,1,0);
+        drawDetail(16);
+    glPopMatrix();
+
+    //prateleiras
+    glPushMatrix();
+        glTranslatef(0.01,5.5,3.25);
+        drawBlock(0.6,0.2,5,17);
+    glPopMatrix();
+
+     glPushMatrix();
+        glTranslatef(0.01,2.19,9.25);
+        drawBlock(0.6,0.2,5,17);
+    glPopMatrix();
+
+     glPushMatrix();
+        glTranslatef(0.01,5.5,15.25);
+        drawBlock(0.6,0.2,5,17);
+    glPopMatrix();
+
+
+
+}
 
 void drawScene(void){
     //Desenha chão
     glDisable(GL_COLOR_MATERIAL);
     glEnable(GL_LIGHTING);
     
+    
     drawFloor(25,25);
-    glPushMatrix();
-        glTranslatef(6,0.05,17);
-        glScalef(2,1,2);
-        glRotatef(90,1,0,0);
-        drawStain();
-    glPopMatrix();
+    drawDetails();
+    
     
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
