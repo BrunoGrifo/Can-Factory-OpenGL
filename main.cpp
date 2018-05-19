@@ -94,9 +94,6 @@ GLvoid draw_circle(const GLfloat radius,const GLuint num_vertex){
   glDisable(GL_TEXTURE_2D);
  
 }
-
-
-
 void draw_cylinder(int state_flag){  //Fui buscar à net
     quadratic = gluNewQuadric();
     if(state_flag==1){
@@ -124,14 +121,7 @@ void draw_cylinder(int state_flag){  //Fui buscar à net
         glPopMatrix();
         glDisable(GL_TEXTURE_2D);
     }
-    
-    
-    
-
-   
 }
-
-
 //Verificar texturas
 void drawBlock(float comp, float alt, float larg, int textID){
 	glPushMatrix();
@@ -206,27 +196,21 @@ void drawHouse(){
 		drawWall(25,10,0.2,10,14,1);
 	glPopMatrix();
 
-
-
     glPushMatrix();
 		glRotatef(-90,0,1,0);
 		drawWall(25,10,0.2,10,14,0);
 	glPopMatrix();
-
 
     glPushMatrix();
 		glTranslatef(0,0,25);
 		drawWall(25,10,0.2,10,14,1);
 	glPopMatrix();
 
-
     glPushMatrix();
 		glTranslatef(25,0,0);
         glRotatef(-90,0,1,0);
 		drawWall(25.2,10,0.2,10,14,0);
 	glPopMatrix();
-
-
 
     //roof
     glPushMatrix();
@@ -596,7 +580,13 @@ void drawCanFloorEngine(){
 
     glutPostRedisplay();
 }
+void drawLamps(){
+    //lamp1
+
+}
 void drawDetails(){
+    //Candeiros
+    drawLamps();
 
     //chao
     glPushMatrix();
@@ -663,7 +653,52 @@ void drawDetails(){
             drawBlock(0.06,0.8,0.06,10);
         glPopMatrix();
 
-    //parede frente
+    //parede esquerda
+    glPushMatrix();
+        glTranslatef(24.2,5,3.25);
+        drawBlock(0.6,0.2,5,17);
+    glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.8,4.5,3.3);
+            glRotatef(45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.8,4.5,8.1);
+            glRotatef(45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+    
+    glPushMatrix();
+        glTranslatef(24.2,2.2,9.25);
+        drawBlock(0.6,0.2,5,17);
+    glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.8,1.7,9.3);
+            glRotatef(45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.8,1.7,14.1);
+            glRotatef(45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+    
+     glPushMatrix();
+        glTranslatef(24.2,5,15.25);
+        drawBlock(0.6,0.2,5,17);
+    glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.8,4.5,15.3);
+            glRotatef(45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.8,4.5,20.1);
+            glRotatef(45,0,0,1);
+            drawBlock(0.06,0.8,0.06,10);
+        glPopMatrix();
+
 
 
 }
@@ -821,157 +856,63 @@ void drawSkybox(float size){
     glPopMatrix();
     
 }
+void drawPathParts(GLfloat* cor,double T1,double T2,double T3,double dB1,double dB2,double dB3,double dBFlag){
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, cor);
+        glTranslatef(T1,T2,T3);
+        drawBlock(dB1,dB2,dB3,dBFlag);
+    glPopMatrix();
+
+}
+void drawPathSupport(double T1,double T2,double T3,double dB1,double dB2,double dB3,double dBFlag ){
+    glPushMatrix();
+        glTranslatef(T1,T2,T3);
+        drawBlock(dB1,dB2,dB3,dBFlag);
+    glPopMatrix();
+}
 void drawConveyor(){
-    
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, azul);
-        glTranslatef(4.1,0,0.2);
-        drawBlock(2,3,4.5,-1);
-    glPopMatrix();
-
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, azul);
-        glTranslatef(19.1,0,0.2);
-        drawBlock(2,3,4.5,-1);
-    glPopMatrix();
-
+    drawPathParts(azul,4.1,0,0.2,2,3,4.5,-1);
+    drawPathParts(azul,19.1,0,0.2,2,3,4.5,-1);
 
     //Secções de transformação
     //Primeira secção
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
-        glTranslatef(4.5,1.25,19.5);
-        drawBlock(1.2,2,1.2,-1);
-    glPopMatrix();
+    drawPathParts(preto,4.5,1.25,19.5,1.2,2,1.2,-1);
     //capa de vermelho
-    
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
-        glTranslatef(4.3,2.3,19.3);
-        drawBlock(1.6,2,1.6,13);
-    glPopMatrix();
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
-        glTranslatef(4.3,1.25,19.3);
-        drawBlock(0.4,1.1,0.2,13);
-    glPopMatrix();
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
-        glTranslatef(5.5,1.25,19.3);
-        drawBlock(0.4,1.1,0.4,13);
-    glPopMatrix();
+    drawPathParts(vermelho,4.3,2.3,19.3,1.6,2,1.6,13);
+    drawPathParts(vermelho,4.3,1.25,19.3,0.4,1.1,0.2,13);
+    drawPathParts(vermelho,5.5,1.25,19.3,0.4,1.1,0.4,13);
+    drawPathParts(vermelho,5.7,1.25,20.5,0.2,1.1,0.4,13);
 
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
-        glTranslatef(5.7,1.25,20.5);
-        drawBlock(0.2,1.1,0.4,13);
-    glPopMatrix();
-
-
-
-    //Asegunda secção
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
-        glTranslatef(19.5,1.25,19.5);
-        drawBlock(1.2,2,1.2,-1);
-    glPopMatrix();
-
+    //Segunda secção
+    drawPathParts(preto,19.5,1.25,19.5,1.2,2,1.2,-1);
     //capa de vermelho
-    
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
-        glTranslatef(19.3,2.3,19.3);
-        drawBlock(1.6,2,1.6,13);
-    glPopMatrix();
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
-        glTranslatef(20.5,1.25,19.3);
-        drawBlock(0.4,1.1,0.2,13);
-    glPopMatrix();
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
-        glTranslatef(19.3,1.25,19.3);
-        drawBlock(0.4,1.1,0.4,13);
-    glPopMatrix();
-
-    glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
-        glTranslatef(19.3,1.25,20.5);
-        drawBlock(0.2,1.1,0.4,13);
-    glPopMatrix();
+    drawPathParts(vermelho,19.3,2.3,19.3,1.6,2,1.6,13);
+    drawPathParts(vermelho,20.5,1.25,19.3,0.4,1.1,0.2,13);
+    drawPathParts(vermelho,19.3,1.25,19.3,0.4,1.1,0.4,13);
+    drawPathParts(vermelho,19.3,1.25,20.5,0.2,1.1,0.4,13);
 
     // -----------------------PRIMEIRA LATA --------------------- PATH
     //lado esquerdo
-    glPushMatrix();
-        glTranslatef(5.5,0,5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(5.5,0,10);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(5.5,0,15);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(5.5,0,19.4);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-    //lado direito
-    glPushMatrix();
-        glTranslatef(4.5,0,5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(4.5,0,10);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(4.5,0,15);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(4.5,0,20.5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
+    drawPathSupport(5.5,0,5,0.2,1,0.2,10);
+    drawPathSupport(5.5,0,10,0.2,1,0.2,10);
+    drawPathSupport(5.5,0,15,0.2,1,0.2,10);
+    drawPathSupport(5.5,0,19.4,0.2,1,0.2,10);
+     //lado direito
+    drawPathSupport(4.5,0,5,0.2,1,0.2,10);
+    drawPathSupport(4.5,0,10,0.2,1,0.2,10);
+    drawPathSupport(4.5,0,15,0.2,1,0.2,10);
+    drawPathSupport(4.5,0,20.5,0.2,1,0.2,10);
     //topo
-    glPushMatrix();
-        glTranslatef(4.5,1,4.5);
-        drawBlock(1.2,0.2,16.2,10);
-    glPopMatrix();
-
-
+    drawPathSupport(4.5,1,4.5,1.2,0.2,16.2,10);
 
     // -----------------------SEGUNDA LATA --------------------- PATH
     //lado esquerdo
-    glPushMatrix();
-        glTranslatef(10,0,20.5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
+    drawPathSupport(10,0,20.5,0.2,1,0.2,10);
+    drawPathSupport(15,0,20.5,0.2,1,0.2,10);
 
-    glPushMatrix();
-        glTranslatef(15,0,20.5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
     //lado direito
-
-    glPushMatrix();
-        glTranslatef(10,0,19.5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(15,0,19.5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-    
+    drawPathSupport(10,0,19.5,0.2,1,0.2,10);
+    drawPathSupport(15,0,19.5,0.2,1,0.2,10); 
     //topo
     glPushMatrix();
         glTranslatef(5,1,20.7);
@@ -981,51 +922,17 @@ void drawConveyor(){
 
     // -----------------------TERCEIRA LATA --------------------- PATH
     //lado esquerdo
-    glPushMatrix();
-        glTranslatef(19.5,0,5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(19.5,0,10);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(19.5,0,15);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(19.5,0,19.4);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
+    drawPathSupport(19.5,0,5,0.2,1,0.2,10);
+    drawPathSupport(19.5,0,10,.2,1,0.2,10);
+    drawPathSupport(19.5,0,15,0.2,1,0.2,10);
+    drawPathSupport(19.5,0,19.4,0.2,1,0.2,10);
     //lado direito
-    glPushMatrix();
-        glTranslatef(20.5,0,5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(20.5,0,10);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(20.5,0,15);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(20.5,0,20.5);
-        drawBlock(0.2,1,0.2,10);
-    glPopMatrix();
+    drawPathSupport(20.5,0,5,0.2,1,0.2,10);
+    drawPathSupport(20.5,0,10,0.2,1,0.2,10);
+    drawPathSupport(20.5,0,15,.2,1,0.2,10);
+    drawPathSupport(20.5,0,20.5,0.2,1,0.2,10);
     //topo
-    glPushMatrix();
-        glTranslatef(19.5,1,4.5);
-        drawBlock(1.2,0.2,16.2,10);
-    glPopMatrix();
-
+    drawPathSupport(19.5,1,4.5,.2,0.2,16.2,10);
     
 }
 
@@ -1040,11 +947,7 @@ void display(void){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(99.0, wScreen/hScreen, 0.3, 100.0);
-    
-    
-   
-    
-    
+
     // Camara + Observador
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -1131,8 +1034,6 @@ void keyboardDown(unsigned char key, int x, int y){
     }
 }
 
-
-
 int main(int argc, char** argv){
     
     glutInit(&argc, argv);
@@ -1147,9 +1048,7 @@ int main(int argc, char** argv){
     glutKeyboardFunc(keyboardDown);
     glutKeyboardUpFunc(keyboardUp);
     glutDisplayFunc(display);
-    
-    
-    
+
     glutMainLoop();
     
     return 0;
