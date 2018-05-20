@@ -580,6 +580,46 @@ void drawCanFloorEngine(){
 
     glutPostRedisplay();
 }
+void drawPathSupport(double T1,double T2,double T3,double dB1,double dB2,double dB3,double dBFlag ){
+    glPushMatrix();
+        glTranslatef(T1,T2,T3);
+        drawBlock(dB1,dB2,dB3,dBFlag);
+    glPopMatrix();
+}
+void drawTRBlock(double T1,double T2,double T3,int R1,int R2,int R3,int R4,double dB1,double dB2,double dB3,double dBFlag){
+    glPushMatrix();
+        glTranslatef(T1,T2,T3);
+        glRotatef(R1,R2,R3,R4);
+        drawBlock(dB1,dB2,dB3,dBFlag);
+    glPopMatrix();
+}
+void drawPrateleiras(){
+    drawPathSupport(0.01,5,3.25,0.6,0.2,5,17);
+        drawTRBlock(0,4.5,3.3,-45,0,0,1,0.06,0.8,0.06,10);
+        drawTRBlock(0,4.5,8.1,-45,0,0,1,0.06,0.8,0.06,10);
+
+    drawPathSupport(0.01,2.2,9.25,0.6,0.2,5,17);
+        drawTRBlock(0,1.7,9.3,-45,0,0,1,0.06,0.8,0.06,10);
+        drawTRBlock(0,1.7,14.1,-45,0,0,1,0.06,0.8,0.06,10);
+
+    drawPathSupport(0.01,5,15.25,0.6,0.2,5,17);
+        drawTRBlock(0,4.5,15.3,-45,0,0,1,0.06,0.8,0.06,10);
+        drawTRBlock(0,4.5,20.1,-45,0,0,1,0.06,0.8,0.06,10);
+
+    //parede esquerda
+    drawPathSupport(24.2,5,3.25,0.6,0.2,5,17);
+        drawTRBlock(24.8,4.5,3.3,45,0,0,1,0.06,0.8,0.06,10);
+        drawTRBlock(24.8,4.5,8.1,45,0,0,1,0.06,0.8,0.06,10);
+
+    drawPathSupport(24.2,2.2,9.25,0.6,0.2,5,17);
+        drawTRBlock(24.8,1.7,9.3,45,0,0,1,0.06,0.8,0.06,10);
+        drawTRBlock(24.8,1.7,14.1,45,0,0,1,0.06,0.8,0.06,10);
+
+    drawPathSupport(24.2,5,15.25,0.6,0.2,5,17);    
+        drawTRBlock(24.8,4.5,15.3,45,0,0,1,0.06,0.8,0.06,10);
+        drawTRBlock(24.8,4.5,20.1,45,0,0,1,0.06,0.8,0.06,10);
+
+}
 void drawLamps(){
     //lamp1
 
@@ -607,97 +647,7 @@ void drawDetails(){
 
     //prateleiras
     //parede direita
-    glPushMatrix();
-        glTranslatef(0.01,5,3.25);
-        drawBlock(0.6,0.2,5,17);
-    glPopMatrix();
-        glPushMatrix();
-            glTranslatef(0,4.5,3.3);
-            glRotatef(-45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-        glPushMatrix();
-            glTranslatef(0,4.5,8.1);
-            glRotatef(-45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-
-    
-     glPushMatrix();
-        glTranslatef(0.01,2.2,9.25);
-        drawBlock(0.6,0.2,5,17);
-    glPopMatrix();
-        glPushMatrix();
-            glTranslatef(0,1.7,9.3);
-            glRotatef(-45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-        glPushMatrix();
-            glTranslatef(0,1.7,14.1);
-            glRotatef(-45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-    
-     glPushMatrix();
-        glTranslatef(0.01,5,15.25);
-        drawBlock(0.6,0.2,5,17);
-    glPopMatrix();
-        glPushMatrix();
-            glTranslatef(0,4.5,15.3);
-            glRotatef(-45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-        glPushMatrix();
-            glTranslatef(0,4.5,20.1);
-            glRotatef(-45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-
-    //parede esquerda
-    glPushMatrix();
-        glTranslatef(24.2,5,3.25);
-        drawBlock(0.6,0.2,5,17);
-    glPopMatrix();
-        glPushMatrix();
-            glTranslatef(24.8,4.5,3.3);
-            glRotatef(45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-        glPushMatrix();
-            glTranslatef(24.8,4.5,8.1);
-            glRotatef(45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-    
-    glPushMatrix();
-        glTranslatef(24.2,2.2,9.25);
-        drawBlock(0.6,0.2,5,17);
-    glPopMatrix();
-        glPushMatrix();
-            glTranslatef(24.8,1.7,9.3);
-            glRotatef(45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-        glPushMatrix();
-            glTranslatef(24.8,1.7,14.1);
-            glRotatef(45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-    
-     glPushMatrix();
-        glTranslatef(24.2,5,15.25);
-        drawBlock(0.6,0.2,5,17);
-    glPopMatrix();
-        glPushMatrix();
-            glTranslatef(24.8,4.5,15.3);
-            glRotatef(45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
-        glPushMatrix();
-            glTranslatef(24.8,4.5,20.1);
-            glRotatef(45,0,0,1);
-            drawBlock(0.06,0.8,0.06,10);
-        glPopMatrix();
+    drawPrateleiras();
 
 
 
@@ -864,12 +814,7 @@ void drawPathParts(GLfloat* cor,double T1,double T2,double T3,double dB1,double 
     glPopMatrix();
 
 }
-void drawPathSupport(double T1,double T2,double T3,double dB1,double dB2,double dB3,double dBFlag ){
-    glPushMatrix();
-        glTranslatef(T1,T2,T3);
-        drawBlock(dB1,dB2,dB3,dBFlag);
-    glPopMatrix();
-}
+
 void drawConveyor(){
     drawPathParts(azul,4.1,0,0.2,2,3,4.5,-1);
     drawPathParts(azul,19.1,0,0.2,2,3,4.5,-1);
