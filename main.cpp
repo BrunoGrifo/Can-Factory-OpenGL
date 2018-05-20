@@ -32,7 +32,7 @@ GLint        wScreen=1000, hScreen=900;        //.. janela (pixeis)
 float canWalk[]={4,5,20};
 float floorWalk[]={3.7,3.7,20};
 
-GLUquadricObj *quadratic;
+GLUquadricObj *quadratic,*lamp;
 
 
 //Parametros de visao do observador
@@ -394,6 +394,7 @@ void drawTRBlock(double T1,double T2,double T3,int R1,int R2,int R3,int R4,doubl
     glPopMatrix();
 }
 void drawPrateleiras(){
+    //parede direita
     drawPathSupport(0.01,5,3.25,0.6,0.2,5,17);
         drawTRBlock(0,4.5,3.3,-45,0,0,1,0.06,0.8,0.06,10);
         drawTRBlock(0,4.5,8.1,-45,0,0,1,0.06,0.8,0.06,10);
@@ -425,6 +426,7 @@ void drawLamps(){
 
 }
 void drawDetails(){
+    lamp = gluNewQuadric();
     //Candeiros
     drawLamps();
 
@@ -446,10 +448,41 @@ void drawDetails(){
     glPopMatrix();
 
     //prateleiras
-    //parede direita
     drawPrateleiras();
 
-
+    //cadeiros
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+        glTranslatef(8,9,8);
+        glRotatef(-90,1,0,0);
+        gluCylinder(lamp,0.02f,0.02f,3,15,10);
+        glTranslatef(0,0,-1);
+        gluCylinder(lamp,0.4f,0.02f,1,15,10);
+    glPopMatrix();
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+        glTranslatef(16,9,8);
+        glRotatef(-90,1,0,0);
+        gluCylinder(lamp,0.02f,0.02f,3,15,10);
+        glTranslatef(0,0,-1);
+        gluCylinder(lamp,0.4f,0.02f,1,15,10);
+    glPopMatrix();
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+        glTranslatef(8,9,16);
+        glRotatef(-90,1,0,0);
+        gluCylinder(lamp,0.02f,0.02f,3,15,10);
+        glTranslatef(0,0,-1);
+        gluCylinder(lamp,0.4f,0.02f,1,15,10);
+    glPopMatrix();
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+        glTranslatef(16,9,16);
+        glRotatef(-90,1,0,0);
+        gluCylinder(lamp,0.02f,0.02f,3,15,10);
+        glTranslatef(0,0,-1);
+        gluCylinder(lamp,0.4f,0.02f,1,15,10);
+    glPopMatrix();
 
 }
 
