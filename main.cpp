@@ -254,6 +254,8 @@ void criaDefineTexturas(void){
     defineTextura(15,"textures/chaosujo.bmp");
     defineTextura(16,"textures/detail1.bmp");
     defineTextura(17,"textures/prateleira.bmp");
+    defineTextura(18,"textures/metaltable.bmp");
+    defineTextura(19,"textures/wood.bmp");
 }
 void init(void){
     glClearColor(WHITE);
@@ -422,35 +424,6 @@ void drawPrateleiras(){
 
 }
 void drawLamps(){
-    //lamp1
-
-}
-void drawDetails(){
-    lamp = gluNewQuadric();
-    //Candeiros
-    drawLamps();
-
-    //chao
-    glPushMatrix();
-        glTranslatef(7.995,0.001,19.62);
-        glScalef(1.99,1,1.99);
-        glRotatef(90,1,0,0);
-        glRotatef(180,0,0,1);
-        drawDetail(15);
-    glPopMatrix();
-    
-    //Parede
-    glPushMatrix();
-        glTranslatef(0.01,2.19,3.25);
-        glScalef(1,2.5,2.5);
-        glRotatef(-90,0,1,0);
-        drawDetail(16);
-    glPopMatrix();
-
-    //prateleiras
-    drawPrateleiras();
-
-    //cadeiros
     glPushMatrix();
         glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
         glTranslatef(8,9,8);
@@ -483,6 +456,79 @@ void drawDetails(){
         glTranslatef(0,0,-1);
         gluCylinder(lamp,0.4f,0.02f,1,15,10);
     glPopMatrix();
+
+}
+void drawMesaDeatails(){
+    drawTRBlock(9.5,1.8,1.8,90,0,1,0,1.2,0.2,6,19);
+    glPushMatrix();
+        glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+        glBindTexture(GL_TEXTURE_2D, textures[18]);
+            glTranslatef(12.5,1.3,1.2);
+            glRotatef(-90,1,0,0);
+            gluQuadricDrawStyle ( lamp, GLU_FILL   );
+            gluQuadricNormals   ( lamp, GLU_SMOOTH );
+            gluQuadricTexture   ( lamp, GL_TRUE    );
+            gluCylinder(lamp,0.1f,0.4f,0.5,15,10);
+            glTranslatef(0,0,-1.2);
+            gluCylinder(lamp,0.8f,0.1f,1.2,30,10);
+        glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+    glPushMatrix();
+        //glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+            //glBindTexture(GL_TEXTURE_2D, textures[18]);
+            glTranslatef(10.5,2.26,1.2);
+            glutSolidTeapot(0.3);
+            glPushMatrix();
+                //glBindTexture(GL_TEXTURE_2D, textures[18]);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glTranslatef(1,-0.2,-0.1);
+                glRotatef(-90,1,0,0);
+                gluCylinder(lamp,0.08f,0.1f,0.4,30,10);
+                glDisable(GL_BLEND);
+            glPopMatrix();
+            glPushMatrix();
+                //glBindTexture(GL_TEXTURE_2D, textures[18]);
+                glTranslatef(0.7,-0.2,0.3);
+                glRotatef(-90,1,0,0);
+                gluCylinder(lamp,0.08f,0.1f,0.4,30,10);
+            glPopMatrix();
+        glPopMatrix();
+        //glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
+}
+void drawDetails(){
+    lamp = gluNewQuadric();
+    //Candeiros
+    drawLamps();
+
+    //chao
+    glPushMatrix();
+        glTranslatef(7.995,0.001,19.62);
+        glScalef(1.99,1,1.99);
+        glRotatef(90,1,0,0);
+        glRotatef(180,0,0,1);
+        drawDetail(15);
+    glPopMatrix();
+    
+    //Parede
+    glPushMatrix();
+        glTranslatef(0.01,2.19,3.25);
+        glScalef(1,2.5,2.5);
+        glRotatef(-90,0,1,0);
+        drawDetail(16);
+    glPopMatrix();
+
+    //prateleiras
+    drawPrateleiras();
+
+    //cadeiros
+    drawLamps();
+
+    drawMesaDeatails();
 
 }
 
