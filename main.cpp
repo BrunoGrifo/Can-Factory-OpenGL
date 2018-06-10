@@ -256,6 +256,7 @@ void criaDefineTexturas(void){
     defineTextura(17,"textures/prateleira.bmp");
     defineTextura(18,"textures/metaltable.bmp");
     defineTextura(19,"textures/wood.bmp");
+    defineTextura(20,"textures/calendar.bmp");
 }
 void init(void){
     glClearColor(WHITE);
@@ -482,8 +483,10 @@ void drawMesaDeatails(){
             glutSolidTeapot(0.3);
             glPushMatrix();
                 //glBindTexture(GL_TEXTURE_2D, textures[18]);
+                glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
                 glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+                glColor4f(0.0f, 0.0f, 1.0f, 0.2f);
                 glTranslatef(1,-0.2,-0.1);
                 glRotatef(-90,1,0,0);
                 gluCylinder(lamp,0.08f,0.1f,0.4,30,10);
@@ -491,7 +494,6 @@ void drawMesaDeatails(){
             glPopMatrix();
             glPushMatrix();
                 //glBindTexture(GL_TEXTURE_2D, textures[18]);
-                glTranslatef(0.7,-0.2,0.3);
                 glRotatef(-90,1,0,0);
                 gluCylinder(lamp,0.08f,0.1f,0.4,30,10);
             glPopMatrix();
@@ -505,7 +507,7 @@ void drawDetails(){
     //Candeiros
     drawLamps();
 
-    //chao
+    //mancha de oleo
     glPushMatrix();
         glTranslatef(7.995,0.001,19.62);
         glScalef(1.99,1,1.99);
@@ -529,6 +531,15 @@ void drawDetails(){
     drawLamps();
 
     drawMesaDeatails();
+
+    //calendario
+    glPushMatrix();
+        glTranslatef(12.3,2.8,0.21);
+        glScalef(2,2,1);
+        glRotatef(180,0,1,0);
+        drawDetail(20);
+    glPopMatrix();
+
 
 }
 
@@ -861,7 +872,7 @@ void keyboardDown(unsigned char key, int x, int y){
 int main(int argc, char** argv){
     
     glutInit(&argc, argv);
-    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
     glutInitWindowSize (wScreen, hScreen);
     glutInitWindowPosition (100, 100);
     glutCreateWindow ("Projeto Final CG 2017/2018 ");
