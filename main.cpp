@@ -7,6 +7,9 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
+
+#define frand()			((float)rand()/RAND_MAX)
+#define MAX_PARTICULAS  25
 //--------------------------------- Definir cores
 #define AZUL     0.0, 0.0, 1.0, 1.0
 #define VERMELHO 1.0, 0.0, 0.0, 1.0
@@ -18,8 +21,31 @@
 #define GRAY     0.9, 0.92, 0.29, 1.0
 #define PI       3.14159
 
+//---------------------------------------- Particle attributes
+typedef struct {
+	float   size;		// tamanho
+	float	life;		// vida
+	float	fade;		// fade
+	float	r, g, b;    // color
+	GLfloat x, y, z;    // posicao
+	GLfloat vx, vy, vz; // velocidade 
+    GLfloat ax, ay, az; // aceleracao
+} Particle;
 
-GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 }, preto[] = { 0 ,0 ,0 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ;
+Particle  particula1[MAX_PARTICULAS];
+GLint    milisec = 1000; 
+int faisca = 0;
+
+//---------------------------------------------- Texturas
+GLuint  texture[1];
+char	 filename[1][12] = {"brilho0.bmp" };
+
+
+
+
+
+
+GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 }, preto[] = { 0.2 ,0.2 ,0.2 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ,amarelo [] = {1, 1, 0.6} ;
 GLfloat luzAmbiente[4] = { 1,1,1,1 };
 //
 int w=0,s=0,d=0,a=0;
@@ -45,6 +71,76 @@ GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1]+rVisao*sin(aVisao
 //Identificador das Texturas
 RgbImage imag;
 GLuint textures[25];
+
+
+void iniParticulas(Particle *particula)
+{
+ GLfloat v, theta, phi;
+ int i;
+ GLfloat px, py, pz;
+ GLfloat ps;
+
+	px = 7.7;
+	py = 8.4;
+	pz = 7.8;
+	ps = 0.03;
+
+
+
+ for(i=0; i<MAX_PARTICULAS; i++)  {
+
+	//---------------------------------  
+	v     = (1*frand()+0.02);
+    theta = (2.0*frand()*M_PI);   // [0..2pi]
+	phi   = (frand()*M_PI);		// [0.. pi]
+    
+    particula[i].size = ps ;		// tamanh de cada particula
+    particula[i].x	  = px + 0.1*frand()*px;    // [-200 200]
+    particula[i].y	  = py + 0.1*frand()*py;	// [-200 200]
+    particula[i].z	  = pz + 0.1*frand()*pz;	// [-200 200]
+        
+	particula[i].vx = v * cos(theta) * sin(phi);	// esferico
+    particula[i].vy = v * cos(phi);
+    particula[i].vz = v * sin(theta) * sin(phi);
+	particula[i].ax = 0.01f;
+    particula[i].ay = -0.01f;
+    particula[i].az = 0.015f;
+
+	particula[i].r = 1.0f;
+	particula[i].g = 1.0f;	
+	particula[i].b = 1.0f;	
+	particula[i].life = 0.2f;		                
+	particula[i].fade = 0.001f;	// Em 100=1/0.01 iteracoes desaparece
+	}
+}
+
+
+void showParticulas(Particle *particula, int sistema) {
+ int i;
+ int numero;
+
+ numero=(int) (frand()*10.0);
+ 
+ for (i=0; i<MAX_PARTICULAS; i++)
+	{
+
+	glColor4f(1,1,1, particula[i].life);
+ 	glBegin(GL_QUADS);				        
+		glTexCoord2d(0,0); glVertex3f(particula[i].x -particula[i].size, particula[i].y -particula[i].size, particula[i].z);      
+		glTexCoord2d(1,0); glVertex3f(particula[i].x +particula[i].size, particula[i].y -particula[i].size, particula[i].z);        
+		glTexCoord2d(1,1); glVertex3f(particula[i].x +particula[i].size, particula[i].y +particula[i].size, particula[i].z);            
+		glTexCoord2d(0,1); glVertex3f(particula[i].x -particula[i].size, particula[i].y +particula[i].size, particula[i].z);       
+	glEnd();	
+	particula[i].x += particula[i].vx;
+    particula[i].y += particula[i].vy;
+    particula[i].z += particula[i].vz;
+    particula[i].vx += particula[i].ax;
+    particula[i].vy += particula[i].ay;
+    particula[i].vz += particula[i].az;
+	particula[i].life -= particula[i].fade;	
+	}
+
+}
 
 
 GLvoid draw_circle(const GLfloat radius,const GLuint num_vertex){
@@ -234,10 +330,10 @@ void defineTextura(int index,char* textura){
                  imag.ImageData());
 
 }
-void criaDefineTexturas(void){
+void criaDefineTexturas(void){	
     //----------------------------------------- Chao z=0
     defineTextura(0,"textures/chao.bmp");
-    defineTextura(1,"textures/wall3.bmp");
+    defineTextura(1,"textures/brilho.bmp");
     defineTextura(2,"textures/lt.bmp");
     defineTextura(3,"textures/rt.bmp");
     defineTextura(4,"textures/ft.bmp");
@@ -257,19 +353,11 @@ void criaDefineTexturas(void){
     defineTextura(18,"textures/metaltable.bmp");
     defineTextura(19,"textures/wood.bmp");
     defineTextura(20,"textures/calendar.bmp");
-}
-void init(void){
-    glClearColor(WHITE);
-    glEnable(GL_DEPTH_TEST);  //activa o zbuffer para ter em conta a profundidade
-    glShadeModel(GL_SMOOTH);
-    criaDefineTexturas();
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glEnable(GL_TEXTURE_2D);
-    
-    
+    defineTextura(21,"textures/candeiro.bmp");
+
     
 }
+
 
 
 void drawFloor(GLfloat comp, GLfloat larg){
@@ -285,8 +373,7 @@ void drawFloor(GLfloat comp, GLfloat larg){
     glDisable(GL_TEXTURE_2D);
 }
 void drawCanEngine(){
-    //glEnable(GL_TEXTURE_2D);
-    //glBindTexture(GL_TEXTURE_2D, textures[8]);
+    glDisable(GL_CULL_FACE);
     for(int i=0;i<16;i++){
         glPushMatrix();
             glTranslatef(5.1,1.3,canWalk[0]+i-0.5);
@@ -297,8 +384,8 @@ void drawCanEngine(){
     canWalk[0]+=0.02;
     if(canWalk[0]>6)
         canWalk[0]=5;
+    glEnable(GL_CULL_FACE);
 
-    //glDisable(GL_TEXTURE_2D);
     for(int i=0;i<15;i++){
         glPushMatrix();
             glTranslatef(canWalk[1]+i,1.3,20.1);
@@ -425,39 +512,89 @@ void drawPrateleiras(){
 
 }
 void drawLamps(){
+    glDisable(GL_CULL_FACE);
     glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
-        glTranslatef(8,9,8);
-        glRotatef(-90,1,0,0);
-        gluCylinder(lamp,0.02f,0.02f,3,15,10);
-        glTranslatef(0,0,-1);
-        gluCylinder(lamp,0.4f,0.02f,1,15,10);
+        glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+        glBindTexture(GL_TEXTURE_2D, textures[21]);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+            glTranslatef(8,9,8);
+            glRotatef(-90,1,0,0);
+            gluQuadricDrawStyle ( lamp, GLU_FILL   );
+            gluQuadricNormals   ( lamp, GLU_SMOOTH );
+            gluQuadricTexture   ( lamp, GL_TRUE    );
+            glDisable(GL_TEXTURE_2D);
+            gluCylinder(lamp,0.02f,0.02f,3,15,10);
+            glTranslatef(0,0,-1);
+            glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+            glBindTexture(GL_TEXTURE_2D, textures[21]);
+            gluCylinder(lamp,0.4f,0.02f,1,15,10);
+            glDisable(GL_TEXTURE_2D);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            glTranslatef(0,0,0.1);
+            glutSolidSphere(0.25, 50, 50);
+        
     glPopMatrix();
     glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
-        glTranslatef(16,9,8);
-        glRotatef(-90,1,0,0);
-        gluCylinder(lamp,0.02f,0.02f,3,15,10);
-        glTranslatef(0,0,-1);
-        gluCylinder(lamp,0.4f,0.02f,1,15,10);
+        glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+        glBindTexture(GL_TEXTURE_2D, textures[21]);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+            glTranslatef(16,9,8);
+            glRotatef(-90,1,0,0);
+            gluQuadricDrawStyle ( lamp, GLU_FILL   );
+            gluQuadricNormals   ( lamp, GLU_SMOOTH );
+            gluQuadricTexture   ( lamp, GL_TRUE    );
+            glDisable(GL_TEXTURE_2D);
+            gluCylinder(lamp,0.02f,0.02f,3,15,10);
+            glTranslatef(0,0,-1);
+            glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+            glBindTexture(GL_TEXTURE_2D, textures[21]);
+            gluCylinder(lamp,0.4f,0.02f,1,15,10);
+            glDisable(GL_TEXTURE_2D);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            glTranslatef(0,0,0.1);
+            glutSolidSphere(0.25, 50, 50);
     glPopMatrix();
     glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
-        glTranslatef(8,9,16);
-        glRotatef(-90,1,0,0);
-        gluCylinder(lamp,0.02f,0.02f,3,15,10);
-        glTranslatef(0,0,-1);
-        gluCylinder(lamp,0.4f,0.02f,1,15,10);
+        glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+        glBindTexture(GL_TEXTURE_2D, textures[21]);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+            glTranslatef(8,9,16);
+            glRotatef(-90,1,0,0);
+            gluQuadricDrawStyle ( lamp, GLU_FILL   );
+            gluQuadricNormals   ( lamp, GLU_SMOOTH );
+            gluQuadricTexture   ( lamp, GL_TRUE    );
+            glDisable(GL_TEXTURE_2D);
+            gluCylinder(lamp,0.02f,0.02f,3,15,10);
+            glTranslatef(0,0,-1);
+            glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+        glBindTexture(GL_TEXTURE_2D, textures[21]);
+            gluCylinder(lamp,0.4f,0.02f,1,15,10);
+            glDisable(GL_TEXTURE_2D);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            glTranslatef(0,0,0.1);
+            glutSolidSphere(0.25, 50, 50);
     glPopMatrix();
     glPushMatrix();
-        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
-        glTranslatef(16,9,16);
-        glRotatef(-90,1,0,0);
-        gluCylinder(lamp,0.02f,0.02f,3,15,10);
-        glTranslatef(0,0,-1);
-        gluCylinder(lamp,0.4f,0.02f,1,15,10);
+        glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+        glBindTexture(GL_TEXTURE_2D, textures[21]);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+            glTranslatef(16,9,16);
+            glRotatef(-90,1,0,0);
+            gluQuadricDrawStyle ( lamp, GLU_FILL   );
+            gluQuadricNormals   ( lamp, GLU_SMOOTH );
+            gluQuadricTexture   ( lamp, GL_TRUE    );
+            glDisable(GL_TEXTURE_2D);
+            gluCylinder(lamp,0.02f,0.02f,3,15,10);
+            glTranslatef(0,0,-1);
+            glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+            glBindTexture(GL_TEXTURE_2D, textures[21]);
+            gluCylinder(lamp,0.4f,0.02f,1,15,10);
+            glDisable(GL_TEXTURE_2D);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            glTranslatef(0,0,0.1);
+            glutSolidSphere(0.25, 50, 50);
     glPopMatrix();
-
+    glEnable(GL_CULL_FACE);
 }
 void drawMesaDeatails(){
     drawTRBlock(9.5,1.8,1.8,90,0,1,0,1.2,0.2,6,19);
@@ -799,6 +936,10 @@ void display(void){
     
     drawHouse();
     drawSkybox(100.0f);
+    glDisable(GL_CULL_FACE);
+    if(faisca==1)
+        showParticulas(particula1, 2);
+    glEnable(GL_CULL_FACE);
     //Atualiza
     glutSwapBuffers();
 }
@@ -830,6 +971,10 @@ void keyboardUp(unsigned char key, int x, int y){
         case 'l':
         case 'L':
         	pressed[5]=0;
+        	break;
+        case 'e':
+        case 'E':
+        	faisca=0;
         	break;
         case 27:
             exit(0);
@@ -863,10 +1008,46 @@ void keyboardDown(unsigned char key, int x, int y){
         case 'L':
         	pressed[5]=1;
         	break;
+        case 'e':
+        case 'E':
+        	iniParticulas(particula1);
+            faisca=1;
+        	break;
         case 27:
             exit(0);
             break;
     }
+}
+//==========================================  Functions
+void idle(void)
+{
+
+ glutPostRedisplay();
+
+}
+
+void Timer(int value) 
+{
+	iniParticulas(particula1);
+
+	glutPostRedisplay();
+	glutTimerFunc(milisec ,Timer, 1);   //.. Espera msecDelay milisegundos
+}
+void init(void){
+    glClearColor(WHITE);
+    glEnable(GL_DEPTH_TEST);  //activa o zbuffer para ter em conta a profundidade
+    glEnable(GL_BLEND);
+    glShadeModel(GL_SMOOTH);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE);	
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+    criaDefineTexturas();
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glEnable(GL_TEXTURE_2D);
+    iniParticulas(particula1);
+    
+    
+    
 }
 
 int main(int argc, char** argv){
@@ -878,11 +1059,12 @@ int main(int argc, char** argv){
     glutCreateWindow ("Projeto Final CG 2017/2018 ");
     //glutFullScreen();
     init();
-    
     //glutReshapeFunc(resize);
     glutKeyboardFunc(keyboardDown);
     glutKeyboardUpFunc(keyboardUp);
     glutDisplayFunc(display);
+     glutIdleFunc(idle);
+    glutTimerFunc(milisec , Timer, 1);     //.. fun��o callback
 
     glutMainLoop();
     
