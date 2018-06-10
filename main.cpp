@@ -70,7 +70,7 @@ GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1]+rVisao*sin(aVisao
 
 //Identificador das Texturas
 RgbImage imag;
-GLuint textures[25];
+GLuint textures[40];
 
 
 void iniParticulas(Particle *particula)
@@ -83,7 +83,7 @@ void iniParticulas(Particle *particula)
 	px = 7.7;
 	py = 8.4;
 	pz = 7.8;
-	ps = 0.03;
+	ps = 0.01;
 
 
 
@@ -190,7 +190,7 @@ GLvoid draw_circle(const GLfloat radius,const GLuint num_vertex){
   glDisable(GL_TEXTURE_2D);
  
 }
-void draw_cylinder(int state_flag){  //Fui buscar à net
+void draw_cylinder(int state_flag,int textura_index){  //Fui buscar à net
     quadratic = gluNewQuadric();
     if(state_flag==1){
         gluCylinder(quadratic,0.2f,0.2f,0.8,15,15);
@@ -205,7 +205,7 @@ void draw_cylinder(int state_flag){  //Fui buscar à net
     if(state_flag==3){
 
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D,textures[8]);
+        glBindTexture(GL_TEXTURE_2D,textures[textura_index]);
         glPushMatrix();
             glRotatef(-90,0,0,1);
             gluQuadricDrawStyle ( quadratic, GLU_FILL   );
@@ -354,6 +354,14 @@ void criaDefineTexturas(void){
     defineTextura(19,"textures/wood.bmp");
     defineTextura(20,"textures/calendar.bmp");
     defineTextura(21,"textures/candeiro.bmp");
+    //defineTextura(22,"textures/paper1.bmp");
+    defineTextura(23,"textures/paper2.bmp");
+    defineTextura(24,"textures/paper3.bmp");
+    defineTextura(25,"textures/paper4.bmp");
+    defineTextura(26,"textures/coca2.bmp");
+    defineTextura(27,"textures/coca3.bmp");
+    defineTextura(28,"textures/coca4.bmp");
+    
 
     
 }
@@ -378,7 +386,7 @@ void drawCanEngine(){
         glPushMatrix();
             glTranslatef(5.1,1.3,canWalk[0]+i-0.5);
             glRotatef(-90, 1,0,0);
-            draw_cylinder(1);
+            draw_cylinder(1,8);
         glPopMatrix();
     }
     canWalk[0]+=0.02;
@@ -390,7 +398,7 @@ void drawCanEngine(){
         glPushMatrix();
             glTranslatef(canWalk[1]+i,1.3,20.1);
             glRotatef(-90, 1,0,0);
-            draw_cylinder(2);
+            draw_cylinder(2,8);
         glPopMatrix();
     }
     canWalk[1]+=0.02;
@@ -401,7 +409,7 @@ void drawCanEngine(){
         glPushMatrix();
             glTranslatef(20.1,1.3,canWalk[2]-i+0.5);
             glRotatef(-90, 1,0,0);
-            draw_cylinder(3);
+            draw_cylinder(3,8);
         glPopMatrix();
     }
     canWalk[2]-=0.02;
@@ -638,38 +646,140 @@ void drawMesaDeatails(){
         //glDisable(GL_TEXTURE_2D);
     glPopMatrix();
 
+
+    //cadeira
+    drawTRBlock(15,0,3,-90,1,0,0,0.1,0.1,2.3,19);
+    drawTRBlock(14.2,0,3,-90,1,0,0,0.1,0.1,2.3,19);
+    drawTRBlock(15,0,2.2,-90,1,0,0,0.1,0.1,1,19);
+    drawTRBlock(14.2,0,2.2,-90,1,0,0,0.1,0.1,1,19);
+    drawTRBlock(14.2,1,3,90,0,1,0,0.9,0.1,0.9,19);
+    drawTRBlock(14.2,1.7,3,-90,1,0,0,0.9,0.1,0.4,19);
+
+    glPushMatrix();
+        glTranslatef(14.9,2.06,1.4);
+        glScalef(0.4,0.8,0.6);
+        glRotatef(180,0,1,0);
+        glRotatef(90,1,0,0);
+        glRotatef(-25,0,0,1);
+        drawDetail(23);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(15,2.05,1.5);
+        glScalef(0.4,0.8,0.6);
+        glRotatef(180,0,1,0);
+        glRotatef(90,1,0,0);
+        drawDetail(24);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(14,2.05,1.5);
+        glScalef(0.4,0.8,0.6);
+        glRotatef(180,0,1,0);
+        glRotatef(90,1,0,0);
+        glRotatef(-15,0,0,1);
+        drawDetail(25);
+    glPopMatrix();
+
 }
 void drawCansAllOverThePlace(){
+
+        //primeira prateleira
+        glPushMatrix();
+            glTranslatef(0.25,5.2,5);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-230, 0,0,1);
+            draw_cylinder(3,27);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,5.4,4.2);
+            glRotatef(-90, 0,1,0);
+            glRotatef(90, 0,0,1);
+            glRotatef(135, 1,0,0);
+            draw_cylinder(3,28);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0.25,5.2,7);
+            glRotatef(-90, 1,0,0);
+            draw_cylinder(3,26);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0.25,5.2,8);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-180, 0,0,1);
+            draw_cylinder(3,8);
+        glPopMatrix();
+
+
+        //segunda prateleira
         glPushMatrix();
             glTranslatef(0.25,2.4,9.5);
             glRotatef(-90, 1,0,0);
             glRotatef(-230, 0,0,1);
-            draw_cylinder(3);
+            draw_cylinder(3,28);
         glPopMatrix();
         glPushMatrix();
             glTranslatef(0.25,2.4,14);
             glRotatef(-90, 1,0,0);
             glRotatef(-160, 0,0,1);
-            draw_cylinder(3);
+            draw_cylinder(3,26);
         glPopMatrix();
         glPushMatrix();
             glTranslatef(0,2.6,13);
             glRotatef(-90, 0,1,0);
             glRotatef(90, 0,0,1);
             glRotatef(135, 1,0,0);
-            draw_cylinder(3);
+            draw_cylinder(3,8);
         glPopMatrix();
         glPushMatrix();
             glTranslatef(0.25,2.4,12);
             glRotatef(-90, 1,0,0);
-            draw_cylinder(3);
+            glRotatef(-180, 0,0,1);
+            draw_cylinder(3,27);
         glPopMatrix();
         glPushMatrix();
             glTranslatef(0.25,2.4,11.2);
             glRotatef(-90, 1,0,0);
             glRotatef(-180, 0,0,1);
-            draw_cylinder(3);
+            draw_cylinder(3,8);
         glPopMatrix();
+
+
+
+        //terceira prateleira
+        glPushMatrix();
+            glTranslatef(0.25,5.2,17.5);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-230, 0,0,1);
+            draw_cylinder(3,27);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,5.4,15.5);
+            glRotatef(-90, 0,1,0);
+            glRotatef(90, 0,0,1);
+            glRotatef(135, 1,0,0);
+            draw_cylinder(3,28);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,5.4,16);
+            glRotatef(-90, 0,1,0);
+            glRotatef(90, 0,0,1);
+            glRotatef(135, 1,0,0);
+            draw_cylinder(3,26);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0.25,5.2,18.5);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-50, 0,0,1);
+            draw_cylinder(3,26);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0.25,5.2,20);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-180, 0,0,1);
+            draw_cylinder(3,8);
+        glPopMatrix();
+        
         /*glPushMatrix();
             glTranslatef(0.25,2.2,10);
             glRotatef(-90, 1,0,0);
@@ -778,13 +888,13 @@ void updateKeys(){
         obsPfin[2]=obsPini[2]+rVisao*sin(aVisao);
 	}
 	if(pressed[4]==1){
-		if(aVisaoY<20){
+		if(obsPfin[1]<6){
 			aVisaoY+=0.05;
 			obsPfin[1]=obsPini[1]+aVisaoY;
 		}
 	}
 	if(pressed[5]==1){
-		if(aVisaoY>-20){
+		if(obsPfin[1]>1){
 			aVisaoY-=0.05;
 			obsPfin[1]=obsPini[1]+aVisaoY;
 		}
