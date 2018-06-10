@@ -361,6 +361,7 @@ void criaDefineTexturas(void){
     defineTextura(26,"textures/coca2.bmp");
     defineTextura(27,"textures/coca3.bmp");
     defineTextura(28,"textures/coca4.bmp");
+    defineTextura(29,"textures/wallstain.bmp");
     
 
     
@@ -878,6 +879,43 @@ void drawCansAllOverThePlace(){
 
 
 }
+void drawWallStains(){
+    int count=0;
+    float amount=0.2;
+    while(count!=11){
+        glPushMatrix();
+            glTranslatef(0.001,7.5,amount);
+            glScalef(1,2.5,2.5);
+            glRotatef(-90,0,1,0);
+            drawDetail(29);
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(24.799,7.5,amount+2.5);
+            glScalef(1,2.5,2.5);
+            glRotatef(90,0,1,0);
+            drawDetail(29);
+        glPopMatrix();
+
+
+        glPushMatrix();
+            glTranslatef(amount,7.5,0.201);
+            glScalef(2.5,2.5,1);
+            glRotatef(180,0,1,0);
+            drawDetail(29);
+        glPopMatrix();
+
+
+        glPushMatrix();
+            glTranslatef(amount-0.2,7.5,24.99);
+            glScalef(2.5,2.5,1);
+            drawDetail(29);
+        glPopMatrix();
+        
+        amount+=2.5;
+        count++;
+    }
+}
 void drawDetails(){
     lamp = gluNewQuadric();
     //Candeiros
@@ -919,6 +957,8 @@ void drawDetails(){
     //Latas espalhadas pela casa
     drawCansAllOverThePlace();
 
+    //manchas parede
+    drawWallStains();
 
 }
 
@@ -940,27 +980,18 @@ void drawScene(void){
     
 }
 void updateKeys(){
+    
 	if(pressed[0]==1){
-		obsPini[0]=(obsPini[0]-incVisao*cos(aVisao));
+        printf("Coordenadas: X-%.2f  Y-%.2f \n",obsPini[0],obsPfin[0]);
+        obsPini[0]=(obsPini[0]-incVisao*cos(aVisao));
         obsPini[2]=(obsPini[2]+incVisao*sin(aVisao));
-        /*if(obsPini[0]>18.5){
-            obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
-        }
-        if(obsPini[2]>18.5){
-            obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
-        }
 
-        if(obsPini[0]<5){
-            obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
-        }
-        if(obsPini[2]<2){
-            obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
-        }*/
-       
         obsPfin[0]=(obsPini[0]-rVisao*cos(aVisao));
         obsPfin[2]=(obsPini[2]+rVisao*sin(aVisao));
+        
 	}
 	if(pressed[1]==1){
+        printf("Coordenadas: X-%.2f  Y-%.2f \n",obsPini[0],obsPfin[0]);
 		obsPini[0]=(obsPini[0]+incVisao*cos(aVisao));
 		obsPini[2]=(obsPini[2]-incVisao*sin(aVisao));
             
@@ -989,6 +1020,18 @@ void updateKeys(){
 			obsPfin[1]=obsPini[1]+aVisaoY;
 		}
 	}
+        if(obsPini[0]>19.1){
+          obsPini[0]=19.09;
+        }
+        if(obsPini[0]<6.20){
+            obsPini[0]=6.21;
+        }
+        if(obsPini[2]>19.1){
+            obsPini[2]=19.09;
+        }
+        if(obsPini[2]<2){
+            obsPini[2]=2.01;
+        }
 
 	glutPostRedisplay();
 }
