@@ -639,6 +639,45 @@ void drawMesaDeatails(){
     glPopMatrix();
 
 }
+void drawCansAllOverThePlace(){
+        glPushMatrix();
+            glTranslatef(0.25,2.4,9.5);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-230, 0,0,1);
+            draw_cylinder(3);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0.25,2.4,14);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-160, 0,0,1);
+            draw_cylinder(3);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0,2.6,13);
+            glRotatef(-90, 0,1,0);
+            glRotatef(90, 0,0,1);
+            glRotatef(135, 1,0,0);
+            draw_cylinder(3);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0.25,2.4,12);
+            glRotatef(-90, 1,0,0);
+            draw_cylinder(3);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(0.25,2.4,11.2);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-180, 0,0,1);
+            draw_cylinder(3);
+        glPopMatrix();
+        /*glPushMatrix();
+            glTranslatef(0.25,2.2,10);
+            glRotatef(-90, 1,0,0);
+            draw_cylinder(3);
+        glPopMatrix();*/
+
+
+}
 void drawDetails(){
     lamp = gluNewQuadric();
     //Candeiros
@@ -676,6 +715,9 @@ void drawDetails(){
         glRotatef(180,0,1,0);
         drawDetail(20);
     glPopMatrix();
+
+    //Latas espalhadas pela casa
+    drawCansAllOverThePlace();
 
 
 }
