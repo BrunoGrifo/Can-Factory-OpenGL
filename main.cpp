@@ -354,7 +354,7 @@ void criaDefineTexturas(void){
     defineTextura(19,"textures/wood.bmp");
     defineTextura(20,"textures/calendar.bmp");
     defineTextura(21,"textures/candeiro.bmp");
-    //defineTextura(22,"textures/paper1.bmp");
+    defineTextura(22,"textures/ini.bmp");
     defineTextura(23,"textures/paper2.bmp");
     defineTextura(24,"textures/paper3.bmp");
     defineTextura(25,"textures/paper4.bmp");
@@ -779,12 +779,102 @@ void drawCansAllOverThePlace(){
             glRotatef(-180, 0,0,1);
             draw_cylinder(3,8);
         glPopMatrix();
-        
-        /*glPushMatrix();
-            glTranslatef(0.25,2.2,10);
+
+        //--------------------------------------------------------------------lado esquerdo
+        //primeira prateleira
+        glPushMatrix();
+            glTranslatef(24.5,5.2,5);
             glRotatef(-90, 1,0,0);
-            draw_cylinder(3);
-        glPopMatrix();*/
+            //glRotatef(-230, 0,0,1);
+            draw_cylinder(3,27);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.75,5.4,4.2);
+            glRotatef(-90, 0,1,0);
+            glRotatef(90, 0,0,1);
+            glRotatef(-45, 1,0,0);
+            draw_cylinder(3,28);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.5,5.2,7);
+            glRotatef(-90, 1,0,0);
+            draw_cylinder(3,26);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.5,5.2,8);
+            glRotatef(-90, 1,0,0);
+            //glRotatef(-180, 0,0,1);
+            draw_cylinder(3,8);
+        glPopMatrix();
+
+
+        //segunda prateleira
+        glPushMatrix();
+            glTranslatef(24.5,2.4,9.5);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-230, 0,0,1);
+            draw_cylinder(3,26);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.5,2.4,14);
+            glRotatef(-90, 1,0,0);
+            //glRotatef(-160, 0,0,1);
+            draw_cylinder(3,28);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.75,2.6,13);
+            glRotatef(-90, 0,1,0);
+            glRotatef(90, 0,0,1);
+            glRotatef(-45, 1,0,0);
+            draw_cylinder(3,26);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.5,2.4,12);
+            glRotatef(-90, 1,0,0);
+            //glRotatef(-180, 0,0,1);
+            draw_cylinder(3,8);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.5,2.4,11.2);
+            glRotatef(-90, 1,0,0);
+            //glRotatef(-180, 0,0,1);
+            draw_cylinder(3,27);
+        glPopMatrix();
+
+
+         //terceira prateleira
+        glPushMatrix();
+            glTranslatef(24.5,5.2,17.5);
+            glRotatef(-90, 1,0,0);
+            //glRotatef(-230, 0,0,1);
+            draw_cylinder(3,27);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.75,5.4,16);
+            glRotatef(-90, 0,1,0);
+            glRotatef(90, 0,0,1);
+            glRotatef(-45, 1,0,0);
+            draw_cylinder(3,28);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.75,5.4,16.5);
+            glRotatef(-90, 0,1,0);
+            glRotatef(90, 0,0,1);
+            glRotatef(-45, 1,0,0);
+            draw_cylinder(3,26);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.5,5.2,18.5);
+            glRotatef(-90, 1,0,0);
+            glRotatef(-50, 0,0,1);
+            draw_cylinder(3,26);
+        glPopMatrix();
+        glPushMatrix();
+            glTranslatef(24.5,5.2,20);
+            glRotatef(-90, 1,0,0);
+            //glRotatef(-180, 0,0,1);
+            draw_cylinder(3,8);
+        glPopMatrix();
 
 
 }
@@ -995,8 +1085,10 @@ void drawPathParts(GLfloat* cor,double T1,double T2,double T3,double dB1,double 
 }
 
 void drawConveyor(){
-    drawPathParts(azul,4.1,0,0.2,2,3,4.5,-1);
-    drawPathParts(azul,19.1,0,0.2,2,3,4.5,-1);
+    drawPathParts(azul,4.1,0,0.2,2,3,4.5,22);
+    drawPathParts(preto,4.5,1.2,4.61,1.2,1.2,0.1,-1);
+    drawPathParts(azul,19.1,0,0.2,2,3,4.5,22);
+    drawPathParts(preto,19.5,1.2,4.61,1.2,1.2,0.1,-1);
 
     //Secções de transformação
     //Primeira secção
