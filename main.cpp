@@ -7,6 +7,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
+#include <string.h>
 
 #define frand()			((float)rand()/RAND_MAX)
 #define MAX_PARTICULAS  25
@@ -36,6 +37,72 @@ Particle  particula1[MAX_PARTICULAS];
 GLint    milisec = 1000; 
 int faisca = 0;
 
+// -----------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------
+// =============================================================================== Iluminacao
+
+//����������������������������������������������������� Luz branca/cinzenta
+GLfloat intLuzA=0.8;
+GLfloat intLuzD=0.9;
+GLfloat lightpos[]		= {    0.0,    15.0,     0.0,   1};
+GLfloat lightambient[]  = { intLuzA, intLuzA, intLuzA    };
+GLfloat lightdiffuse[]  = { intLuzD, intLuzD, intLuzD    };
+GLfloat lightspecular[] = {	   1.0,     1.0,   1.0	     };
+GLfloat dir[]={0,-1,0};
+
+
+
+//============================================================== Objectos
+//����������������������������������������������������� Objectos Opacos
+
+GLfloat  matBranco[]={ 1,1,1, 1};				// eixos
+
+//............................................................ bule azul fixo
+GLfloat  turquoiA []={ 0.1 ,0.18725 ,0.1745 };
+GLfloat  turquoiD []={ 0.396 ,0.74151 ,0.69102, 1.0 };
+GLfloat  turquoiS []={ 0.297254 ,0.30829 ,0.306678 };
+GLint	 turquoiC = 0.1 *128;
+
+//����������������������������������������������������� Objectos transparentes
+GLfloat  alfa =0.8;
+
+//............................................................ toroide as voltas
+GLfloat  silverA []={ 0.19225, 0.19225, 0.19225      };  
+GLfloat  silverD []={ 0.50754, 0.50754, 0.50754, alfa};    // na componente difusa
+GLfloat  silverS []={ 0.50827, 0.50827, 0.50827      };
+GLint    silverC = 0.4 *128;
+
+//............................................................ bule dourado no centro
+// +++++++++ A IMPLEMENTAR  +++++++++
+GLfloat  goldA []={ 0.24725, 0.1995, 0.0745      };  
+GLfloat  goldD []={ 0.75164, 0.60648, 0.22648, alfa};    // na componente difusa
+GLfloat  goldS []={ 0.628281, 0.555802, 0.366065      };
+GLint    goldC = 0.4 *128;
+
+
+//����������������������������������������������������� Posicao toroide
+GLfloat  rObj1  = 7.9;
+GLfloat  angR   = -90;
+GLfloat  incR   =   5;   // graus
+GLfloat	 pObj1[] = { rObj1*cos(angR*PI/180.0), 0.5, rObj1*sin(angR*PI/180.0) };
+
+
+//==============================================================  observador
+GLfloat  raioOB = 12;
+GLfloat  angOB  = 0.70;
+GLfloat	 pO[]= { raioOB*cos(angOB), 1, raioOB*sin(angOB) };
+
+//============================================================== Variaveis
+GLint    parar =0;		// parar/iniciar movimento objecto1
+GLint    text  =0;		// Com/sem textura 
+GLint    decal =0;		// Tipo de mapeamento na textura
+
+
+//======================================================================================
+//======================================================================================
+//======================================================================================
+
+
 //---------------------------------------------- Texturas
 GLuint  texture[1];
 char	 filename[1][12] = {"brilho0.bmp" };
@@ -45,12 +112,12 @@ char	 filename[1][12] = {"brilho0.bmp" };
 
 
 
-GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 }, preto[] = { 0.2 ,0.2 ,0.2 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ,amarelo [] = {1, 1, 0.6} ;
+GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 }, preto[] = { 0.2 ,0.2 ,0.2 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ,amarelo [] = {1, 1, 0.6} ,copo [] = {0.9,0.95,1};
 GLfloat luzAmbiente[4] = { 1,1,1,1 };
 //
 int w=0,s=0,d=0,a=0;
 
-int pressed[6] = {0,0,0,0,0,0}; //moves
+int pressed[12] = {0,0,0,0,0,0,0,0,0,0,0,0}; //moves
 
 GLint        wScreen=1000, hScreen=900;        //.. janela (pixeis)
 
@@ -219,6 +286,31 @@ void draw_cylinder(int state_flag,int textura_index){  //Fui buscar à net
     }
 }
 //Verificar texturas
+void drawWindow(float comp, float alt, float larg, int textID){
+	glPushMatrix();
+		//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        if(textID!=-1){
+            glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+            glBindTexture(GL_TEXTURE_2D, textures[textID]);
+        }
+		glBegin(GL_QUADS);
+		    // Front Face
+		    glTexCoord2f(0.0f, 0.0f); glVertex3f( 0.0f,  0.0f,  larg);  // Bottom Left Of The Texture and Quad
+		    glTexCoord2f(1.0f, 0.0f); glVertex3f( comp,  0.0f,  larg);  // Bottom Right Of The Texture and Quad
+		    glTexCoord2f(1.0f, 1.0f); glVertex3f( comp,  alt,   larg);  // Top Right Of The Texture and Quad
+		    glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.0f,  alt,   larg);  // Top Left Of The Texture and Quad
+		    // Back Face
+		    glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.0f,  0.0f,  0.0f);  // Bottom Right Of The Texture and Quad
+		    glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.0f,   alt,  0.0f);  // Top Right Of The Texture and Quad
+		    glTexCoord2f(0.0f, 1.0f); glVertex3f( comp,   alt,  0.0f);  // Top Left Of The Texture and Quad
+		    glTexCoord2f(0.0f, 0.0f); glVertex3f( comp,  0.0f,  0.0f);  // Bottom Left Of The Texture and Quad
+		    
+		glEnd();
+        if(textID!=-1)
+		    glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+}
+//Verificar texturas
 void drawBlock(float comp, float alt, float larg, int textID){
 	glPushMatrix();
 		//glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -285,6 +377,32 @@ void drawWall(float comp, float alt, float larg, int d,int index,int window){
             }
 		}
 	}
+    if(window==1){
+        for(j=0.0f;j<dAlt;j++){
+            for(i=0.0f;i<d;i++){
+                    if((j==1 && i==3) || (j==1 && i==6) || (j==1 && i==7) || (j==1 && i==2)){
+                        glDisable(GL_TEXTURE_2D);
+
+                        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,   silverA);
+                        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,   silverD);
+                        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,  silverS);
+                        glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, silverC);
+                        glPushMatrix();
+                            glMaterialfv(GL_FRONT, GL_AMBIENT, copo);
+                            glEnable(GL_BLEND);
+                            glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+                            glTranslatef((comp/d)*i,(alt/dAlt)*j,0.0f);
+                            drawWindow(comp/d,alt/dAlt,larg,-1);
+                            glDisable(GL_BLEND);
+                        glPopMatrix();	
+                        glEnable(GL_TEXTURE_2D);
+                    }else{
+                        continue;
+                    }
+                
+            }
+        }
+    }
 }
 
 void drawHouse(){
@@ -362,6 +480,12 @@ void criaDefineTexturas(void){
     defineTextura(27,"textures/coca3.bmp");
     defineTextura(28,"textures/coca4.bmp");
     defineTextura(29,"textures/wallstain.bmp");
+    defineTextura(30,"textures/chaleira.bmp");
+    defineTextura(31,"textures/factory.bmp");
+    defineTextura(32,"textures/quadro1.bmp");
+    defineTextura(33,"textures/quadro2.bmp");
+    defineTextura(34,"textures/quadro3.bmp");
+    defineTextura(35,"textures/quadro4.bmp");
     
 
     
@@ -626,23 +750,26 @@ void drawMesaDeatails(){
         glPushMatrix();
             //glBindTexture(GL_TEXTURE_2D, textures[18]);
             glTranslatef(10.5,2.26,1.2);
-            glutSolidTeapot(0.3);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D,textures[30]);
+                glutSolidTeapot(0.3);
+            glDisable(GL_TEXTURE_2D);
             glPushMatrix();
                 //glBindTexture(GL_TEXTURE_2D, textures[18]);
-                glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+                glMaterialfv(GL_FRONT, GL_AMBIENT, copo);
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
                 glColor4f(0.0f, 0.0f, 1.0f, 0.2f);
-                glTranslatef(1,-0.2,-0.1);
+                glTranslatef(1,-0.2,0.2);
                 glRotatef(-90,1,0,0);
+                glDisable(GL_CULL_FACE);
                 gluCylinder(lamp,0.08f,0.1f,0.4,30,10);
+                glTranslatef(-0.3,-0.2,0);
+                gluCylinder(lamp,0.08f,0.1f,0.4,30,10);
+                glEnable(GL_CULL_FACE);
                 glDisable(GL_BLEND);
             glPopMatrix();
-            glPushMatrix();
-                //glBindTexture(GL_TEXTURE_2D, textures[18]);
-                glRotatef(-90,1,0,0);
-                gluCylinder(lamp,0.08f,0.1f,0.4,30,10);
-            glPopMatrix();
+            
         glPopMatrix();
         //glDisable(GL_TEXTURE_2D);
     glPopMatrix();
@@ -916,6 +1043,43 @@ void drawWallStains(){
         count++;
     }
 }
+void printText(char *string, GLfloat x, GLfloat y, GLfloat z) {  
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+        glRasterPos3f(x,y,z); 
+        while(*string)
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *string++); 
+    glPopMatrix();
+}
+void quadros(){
+    glPushMatrix();
+        glTranslatef(7.6,6,0.21);
+        glScalef(2.5,2.5,1);
+        glRotatef(180,0,1,0);
+        drawDetail(32);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(11.8,6,0.21);
+        glScalef(2.5,2.5,1);
+        glRotatef(180,0,1,0);
+        drawDetail(33);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(16,6,0.21);
+        glScalef(2.5,2.5,1);
+        glRotatef(180,0,1,0);
+        drawDetail(34);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(20,6,0.21);
+        glScalef(2.5,2.5,1);
+        glRotatef(180,0,1,0);
+        drawDetail(35);
+    glPopMatrix();
+}
 void drawDetails(){
     lamp = gluNewQuadric();
     //Candeiros
@@ -941,9 +1105,6 @@ void drawDetails(){
     //prateleiras
     drawPrateleiras();
 
-    //cadeiros
-    drawLamps();
-
     drawMesaDeatails();
 
     //calendario
@@ -954,18 +1115,31 @@ void drawDetails(){
         drawDetail(20);
     glPopMatrix();
 
+    glPushMatrix();
+        glTranslatef(14.6,2.8,0.21);
+        glScalef(2,2,1);
+        glRotatef(180,0,1,0);
+        drawDetail(31);
+    glPopMatrix();
+
+    //quadros
+    quadros();
+
     //Latas espalhadas pela casa
     drawCansAllOverThePlace();
 
     //manchas parede
     drawWallStains();
 
+    //quadros
+    //printText("Teste numero 1",14,5,24.5);
+
+
 }
 
 void drawScene(void){
     //Desenha chão
     glDisable(GL_COLOR_MATERIAL);
-    glEnable(GL_LIGHTING);
     
     
     drawFloor(25,25);
@@ -1032,6 +1206,27 @@ void updateKeys(){
         if(obsPini[2]<2){
             obsPini[2]=2.01;
         }
+
+    lightambient[0] = intLuzA;
+	lightambient[1] = intLuzA;
+	lightambient[2] = intLuzA;
+	lightdiffuse[0] = intLuzD;
+	lightdiffuse[1] = intLuzD;
+	lightdiffuse[2] = intLuzD;
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lightambient );   
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightdiffuse ); 
+    
+    if(pressed[6]==1){
+        alfa=alfa+0.02;
+        if (alfa>=1) alfa=1;
+    }
+     if(pressed[7]==1){
+        alfa=alfa-0.02;
+        if (alfa<=0) alfa=0;
+    }
+
+    goldD[3]	=alfa;
+	silverD[3]  =alfa;
 
 	glutPostRedisplay();
 }
@@ -1212,23 +1407,58 @@ void display(void){
     glLoadIdentity();
     
     updateKeys();
+    
 
     //Posição do observador
     gluLookAt(obsPini[0], obsPini[1], obsPini[2], obsPfin[0], obsPfin[1], obsPfin[2], 0, 1, 0);
     
-    
+    drawSkybox(100.0f);
+    drawHouse();
     //Desenha "cena"
     drawScene();
     drawConveyor();
     
-    drawHouse();
-    drawSkybox(100.0f);
+    
+    
     glDisable(GL_CULL_FACE);
     if(faisca==1)
         showParticulas(particula1, 2);
     glEnable(GL_CULL_FACE);
     //Atualiza
     glutSwapBuffers();
+}
+
+void defineLuz()
+{
+  glEnable(GL_LIGHT0);
+  glLightfv(GL_LIGHT0, GL_POSITION,      lightpos );   
+  glLightfv(GL_LIGHT0, GL_AMBIENT,       lightambient );   
+  glLightfv(GL_LIGHT0, GL_SPECULAR,      lightspecular );   
+  glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,   105);
+  glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,   dir);
+}
+
+void initNight(void) {
+
+	glClearColor( 0.144, 0.147, 0.18, 1.0f);
+
+	glEnable(GL_NORMALIZE);
+	
+	//-------------------------- Profundidade
+	glEnable(GL_DEPTH_TEST);
+	glShadeModel(GL_SMOOTH);
+	
+	//-------------------------- Luz no eixo do y
+	glEnable(GL_LIGHTING);
+    defineLuz(); 
+  	
+	//------------------------------------------------- "misturar" cores objectos
+	glEnable(GL_BLEND);    
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//-------------------------- Texturas
+	criaDefineTexturas( );
+
 }
 
 
@@ -1262,6 +1492,30 @@ void keyboardUp(unsigned char key, int x, int y){
         case 'e':
         case 'E':
         	faisca=0;
+        	break;
+        case 'i':
+        case 'I':
+            pressed[6]=0;
+        	break;
+        case 'k':
+        case 'K':
+        	pressed[7]=0;
+        	break;
+        case 'u':
+        case 'U':
+        	pressed[8]=0;
+        	break;
+        case 'j':
+        case 'J':
+        	pressed[9]=0;
+        	break;
+        case 'y':
+        case 'Y':
+        	pressed[10]=0;
+        	break;
+        case 'h':
+        case 'H':
+        	pressed[11]=0;
         	break;
         case 27:
             exit(0);
@@ -1300,6 +1554,34 @@ void keyboardDown(unsigned char key, int x, int y){
         	iniParticulas(particula1);
             faisca=1;
         	break;
+        case 'n':
+        case 'N':
+        	initNight();
+        	break;
+        case 'i':
+        case 'I':
+            pressed[6]=1;
+        	break;
+        case 'k':
+        case 'K':
+        	pressed[7]=1;
+        	break;
+        case 'u':
+        case 'U':
+        	pressed[8]=1;
+        	break;
+        case 'j':
+        case 'J':
+        	pressed[9]=1;
+        	break;
+        case 'y':
+        case 'Y':
+        	pressed[10]=1;
+        	break;
+        case 'h':
+        case 'H':
+        	pressed[11]=1;
+        	break;
         case 27:
             exit(0);
             break;
@@ -1323,19 +1605,19 @@ void Timer(int value)
 void init(void){
     glClearColor(WHITE);
     glEnable(GL_DEPTH_TEST);  //activa o zbuffer para ter em conta a profundidade
-    glEnable(GL_BLEND);
     glShadeModel(GL_SMOOTH);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE);	
     glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
     criaDefineTexturas();
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glEnable(GL_TEXTURE_2D);
     iniParticulas(particula1);
+    glEnable(GL_LIGHTING);
     
     
     
 }
+
 
 int main(int argc, char** argv){
     
