@@ -1719,7 +1719,7 @@ void drawConveyor(){
     drawPathSupport(20.5,0,15,.2,1,0.2,10);
     drawPathSupport(20.5,0,20.5,0.2,1,0.2,10);
     //topo
-    drawPathSupport(19.5,1,4.5,.2,0.2,16.2,10);
+    drawPathSupport(19.5,1,4.5,1.2,0.2,16.2,10);
     
 }
 
