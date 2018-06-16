@@ -35,7 +35,8 @@ typedef struct {
 
 Particle  particula1[MAX_PARTICULAS];
 GLint    milisec = 1000; 
-int faisca = 0;
+int faisca = 0,alavanca =1 ,alavancaLigada=0;
+float B_angulo=-45;
 
 // -----------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------
@@ -112,7 +113,7 @@ char	 filename[1][12] = {"brilho0.bmp" };
 
 
 
-GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 }, preto[] = { 0.2 ,0.2 ,0.2 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ,amarelo [] = {1, 1, 0.6} ,copo [] = {0.9,0.95,1};
+GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 },castanho[] = { 0.5 ,0.3 ,0.2 }, preto[] = { 0.2 ,0.2 ,0.2 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ,amarelo [] = {1, 1, 0.6} ,copo [] = {0.9,0.95,1};
 GLfloat luzAmbiente[4] = { 1,1,1,1 };
 //
 int w=0,s=0,d=0,a=0;
@@ -125,7 +126,7 @@ GLint        wScreen=1000, hScreen=900;        //.. janela (pixeis)
 float canWalk[]={4,5,20};
 float floorWalk[]={3.7,3.7,20};
 
-GLUquadricObj *quadratic,*lamp;
+GLUquadricObj *quadratic,*lamp,*button;
 
 
 //Parametros de visao do observador
@@ -137,7 +138,7 @@ GLfloat  obsPfin[] ={obsPini[0]+rVisao*cos(aVisao), obsPini[1]+rVisao*sin(aVisao
 
 //Identificador das Texturas
 RgbImage imag;
-GLuint textures[40];
+GLuint textures[50];
 
 
 void iniParticulas(Particle *particula)
@@ -150,7 +151,7 @@ void iniParticulas(Particle *particula)
 	px = 7.7;
 	py = 8.4;
 	pz = 7.8;
-	ps = 0.01;
+	ps = 0.015;
 
 
 
@@ -188,24 +189,27 @@ void showParticulas(Particle *particula, int sistema) {
 
  numero=(int) (frand()*10.0);
  
- for (i=0; i<MAX_PARTICULAS; i++)
-	{
-
-	glColor4f(1,1,1, particula[i].life);
- 	glBegin(GL_QUADS);				        
-		glTexCoord2d(0,0); glVertex3f(particula[i].x -particula[i].size, particula[i].y -particula[i].size, particula[i].z);      
-		glTexCoord2d(1,0); glVertex3f(particula[i].x +particula[i].size, particula[i].y -particula[i].size, particula[i].z);        
-		glTexCoord2d(1,1); glVertex3f(particula[i].x +particula[i].size, particula[i].y +particula[i].size, particula[i].z);            
-		glTexCoord2d(0,1); glVertex3f(particula[i].x -particula[i].size, particula[i].y +particula[i].size, particula[i].z);       
-	glEnd();	
-	particula[i].x += particula[i].vx;
-    particula[i].y += particula[i].vy;
-    particula[i].z += particula[i].vz;
-    particula[i].vx += particula[i].ax;
-    particula[i].vy += particula[i].ay;
-    particula[i].vz += particula[i].az;
-	particula[i].life -= particula[i].fade;	
-	}
+ for (i=0; i<MAX_PARTICULAS; i++){
+    glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D,textures[1]);
+        glPushMatrix();
+            glColor4f(1,1,1, particula[i].life);
+            glBegin(GL_QUADS);				        
+                glTexCoord2d(0,0); glVertex3f(particula[i].x -particula[i].size, particula[i].y -particula[i].size, particula[i].z);      
+                glTexCoord2d(1,0); glVertex3f(particula[i].x +particula[i].size, particula[i].y -particula[i].size, particula[i].z);        
+                glTexCoord2d(1,1); glVertex3f(particula[i].x +particula[i].size, particula[i].y +particula[i].size, particula[i].z);            
+                glTexCoord2d(0,1); glVertex3f(particula[i].x -particula[i].size, particula[i].y +particula[i].size, particula[i].z);       
+            glEnd();	
+            particula[i].x += particula[i].vx;
+            particula[i].y += particula[i].vy;
+            particula[i].z += particula[i].vz;
+            particula[i].vx += particula[i].ax;
+            particula[i].vy += particula[i].ay;
+            particula[i].vz += particula[i].az;
+            particula[i].life -= particula[i].fade;	
+            }
+        glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 
 }
 
@@ -432,6 +436,8 @@ void drawHouse(){
         glRotatef(-90,1,0,0);
 		drawWall(25,25,0.2,20,7,0);
 	glPopMatrix();
+
+
 }
 void defineTextura(int index,char* textura){
     glGenTextures(1, &textures[index]);
@@ -480,12 +486,12 @@ void criaDefineTexturas(void){
     defineTextura(27,"textures/coca3.bmp");
     defineTextura(28,"textures/coca4.bmp");
     defineTextura(29,"textures/wallstain.bmp");
-    defineTextura(30,"textures/chaleira.bmp");
-    defineTextura(31,"textures/factory.bmp");
-    defineTextura(32,"textures/quadro1.bmp");
-    defineTextura(33,"textures/quadro2.bmp");
-    defineTextura(34,"textures/quadro3.bmp");
-    defineTextura(35,"textures/quadro4.bmp");
+    defineTextura(40,"textures/chaleira.bmp");
+    defineTextura(41,"textures/factory.bmp");
+    defineTextura(42,"textures/quadro1.bmp");
+    defineTextura(43,"textures/quadro2.bmp");
+    defineTextura(44,"textures/quadro3.bmp");
+    defineTextura(45,"textures/quadro4.bmp");
     
 
     
@@ -751,7 +757,7 @@ void drawMesaDeatails(){
             //glBindTexture(GL_TEXTURE_2D, textures[18]);
             glTranslatef(10.5,2.26,1.2);
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D,textures[30]);
+            glBindTexture(GL_TEXTURE_2D,textures[40]);
                 glutSolidTeapot(0.3);
             glDisable(GL_TEXTURE_2D);
             glPushMatrix();
@@ -1056,28 +1062,28 @@ void quadros(){
         glTranslatef(7.6,6,0.21);
         glScalef(2.5,2.5,1);
         glRotatef(180,0,1,0);
-        drawDetail(32);
+        drawDetail(42);
     glPopMatrix();
 
     glPushMatrix();
         glTranslatef(11.8,6,0.21);
         glScalef(2.5,2.5,1);
         glRotatef(180,0,1,0);
-        drawDetail(33);
+        drawDetail(43);
     glPopMatrix();
 
     glPushMatrix();
         glTranslatef(16,6,0.21);
         glScalef(2.5,2.5,1);
         glRotatef(180,0,1,0);
-        drawDetail(34);
+        drawDetail(44);
     glPopMatrix();
 
     glPushMatrix();
         glTranslatef(20,6,0.21);
         glScalef(2.5,2.5,1);
         glRotatef(180,0,1,0);
-        drawDetail(35);
+        drawDetail(45);
     glPopMatrix();
 }
 void drawDetails(){
@@ -1119,7 +1125,7 @@ void drawDetails(){
         glTranslatef(14.6,2.8,0.21);
         glScalef(2,2,1);
         glRotatef(180,0,1,0);
-        drawDetail(31);
+        drawDetail(41);
     glPopMatrix();
 
     //quadros
@@ -1136,14 +1142,117 @@ void drawDetails(){
 
 
 }
+void drawAlavanca(){
+    button = gluNewQuadric();
+    glPushMatrix();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, castanho);
+        drawPathSupport(17.2,0,1.5,0.5,0.4,1,-1);
+    glPopMatrix();
+    if(alavanca==1){
+        if(alavancaLigada==1){ //acabar
+            glPushMatrix();
+                glDisable(GL_CULL_FACE);
+                glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+                glTranslatef(17.45,0.3,2);
+                glRotatef(-135,1,0,0);
+                gluCylinder(button,0.04f,0.04f,2,15,10);
+                glEnable(GL_CULL_FACE);
+            glPopMatrix();
+            glPushMatrix();
+                glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+                glTranslatef(17.45,0.3,2);
+                glRotatef(-135,1,0,0);
+                gluCylinder(button,0.0401f,0.0401f,1.9,15,10);
+            glPopMatrix();
+            /*glPushMatrix();
+                glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+                glTranslatef(17.2,3,1.5);
+                glRotatef(90,1,0,0);
+                gluCylinder(button,0.04f,0.04f,2,15,10);
+            glPopMatrix();*/
+        }else{
+            glPushMatrix();
+                glDisable(GL_CULL_FACE);
+                glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+                glTranslatef(17.45,0.3,2);
+                glRotatef(-45,1,0,0);
+                gluCylinder(button,0.04f,0.04f,2,15,10);
+                glEnable(GL_CULL_FACE);
+            glPopMatrix();
+            glPushMatrix();
+                glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+                glTranslatef(17.45,0.3,2);
+                glRotatef(-45,1,0,0);
+                gluCylinder(button,0.0401f,0.0401f,1.9,15,10);
+            glPopMatrix();
+        }
+    }else{
+        
+        if(alavancaLigada==1){  //acabar
+            B_angulo+=0.8;
+            if(B_angulo>(-45)){
+                printf("Angulo: %.2f \n",B_angulo);
+                B_angulo=-45;
+                alavanca=1;
+                alavancaLigada=0;
+            }
+            glPushMatrix();
+                glDisable(GL_CULL_FACE);
+                glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+                glTranslatef(17.45,0.3,2);
+                glRotatef(B_angulo,1,0,0);
+                gluCylinder(button,0.04f,0.04f,2,15,10);
+                glEnable(GL_CULL_FACE);
+            glPopMatrix();
+            glPushMatrix();
+                glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+                glTranslatef(17.45,0.3,2);
+                glRotatef(B_angulo,1,0,0);
+                gluCylinder(button,0.0401f,0.0401f,1.9,15,10);
+            glPopMatrix();
 
+            /*glPushMatrix();
+                glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+                glTranslatef(17.2,3,1.5);
+                glRotatef(90,1,0,0);
+                gluCylinder(button,0.04f,0.04f,2,15,10);
+            glPopMatrix();*/
+        }else{
+            B_angulo-=0.8;
+            if(B_angulo<(-135)){
+                printf("Angulo: %.2f \n",B_angulo);
+                B_angulo=-135;
+                alavanca=1;
+                alavancaLigada=1;
+            }
+            glPushMatrix();
+                glDisable(GL_CULL_FACE);
+                glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+                glTranslatef(17.45,0.3,2);
+                glRotatef(B_angulo,1,0,0);
+                gluCylinder(button,0.04f,0.04f,2,15,10);
+                glEnable(GL_CULL_FACE);
+            glPopMatrix();
+            glPushMatrix();
+                glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+                glTranslatef(17.45,0.3,2);
+                glRotatef(B_angulo,1,0,0);
+                gluCylinder(button,0.0401f,0.0401f,1.9,15,10);
+            glPopMatrix();
+        }
+
+    }
+
+}
 void drawScene(void){
     //Desenha chão
     glDisable(GL_COLOR_MATERIAL);
     
     
     drawFloor(25,25);
+    drawAlavanca();
     drawDetails();
+
     
     
     glPushMatrix();
@@ -1553,6 +1662,13 @@ void keyboardDown(unsigned char key, int x, int y){
         case 'E':
         	iniParticulas(particula1);
             faisca=1;
+            if(alavanca==0){
+                if(alavancaLigada==0){
+                    alavancaLigada=1;
+                }else
+                    alavancaLigada=0;
+            }else
+                alavanca=0;
         	break;
         case 'n':
         case 'N':
