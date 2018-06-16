@@ -1725,7 +1725,7 @@ void drawConveyor(){
 
 void display(void){
     //Limpa buffers
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzGlobalCor);
     glEnable(GL_LIGHTING);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -1907,6 +1907,7 @@ void keyboardDown(unsigned char key, int x, int y){
         	break;
         case 't':
         case 'T':
+        if(obsPini[0]>16 && obsPini[2]<19.5){
             if(alavanca==0){
                 if(alavancaLigada==0){
                     alavancaLigada=1;
@@ -1916,6 +1917,7 @@ void keyboardDown(unsigned char key, int x, int y){
                 alavanca=0; 
             trabalha = !trabalha;
             glutPostRedisplay();
+        }
             break;
         case 'g':
         case 'G':
