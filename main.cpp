@@ -1325,11 +1325,11 @@ void updateKeys(){
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightambient );   
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightdiffuse ); 
     
-    if(pressed[6]==1){
+    if(pressed[8]==1){
         alfa=alfa+0.02;
         if (alfa>=1) alfa=1;
     }
-     if(pressed[7]==1){
+     if(pressed[9]==1){
         alfa=alfa-0.02;
         if (alfa<=0) alfa=0;
     }
@@ -1537,40 +1537,6 @@ void display(void){
     glutSwapBuffers();
 }
 
-void defineLuz()
-{
-  glEnable(GL_LIGHT0);
-  glLightfv(GL_LIGHT0, GL_POSITION,      lightpos );   
-  glLightfv(GL_LIGHT0, GL_AMBIENT,       lightambient );   
-  glLightfv(GL_LIGHT0, GL_SPECULAR,      lightspecular );   
-  glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,   105);
-  glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,   dir);
-}
-
-void initNight(void) {
-
-	glClearColor( 0.144, 0.147, 0.18, 1.0f);
-
-	glEnable(GL_NORMALIZE);
-	
-	//-------------------------- Profundidade
-	glEnable(GL_DEPTH_TEST);
-	glShadeModel(GL_SMOOTH);
-	
-	//-------------------------- Luz no eixo do y
-	glEnable(GL_LIGHTING);
-    defineLuz(); 
-  	
-	//------------------------------------------------- "misturar" cores objectos
-	glEnable(GL_BLEND);    
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//-------------------------- Texturas
-	criaDefineTexturas( );
-
-}
-
-
 void keyboardUp(unsigned char key, int x, int y){
     
     switch (key) {
@@ -1672,7 +1638,6 @@ void keyboardDown(unsigned char key, int x, int y){
         	break;
         case 'n':
         case 'N':
-        	initNight();
         	break;
         case 'i':
         case 'I':
