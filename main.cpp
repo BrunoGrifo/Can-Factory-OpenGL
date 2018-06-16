@@ -1536,6 +1536,10 @@ void updateKeys(){
 void drawSkybox(float size) {
 
 	size = size / 2.0f;
+	int aumento = 0;
+	if (!noite) {
+		aumento = 8;
+	}
 
 	glEnable(GL_TEXTURE_2D);
 
@@ -1544,14 +1548,15 @@ void drawSkybox(float size) {
 	}
 	else {
 		glBindTexture(GL_TEXTURE_2D, textures[34]);
+
 	}
 	glPushMatrix();
 
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] - size, obsPini[1] - size, obsPini[2] - size);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] - size - aumento, obsPini[1] - size, obsPini[2] - size);
 	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] - size);
 	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] - size);
-	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] - size, obsPini[1] + size, obsPini[2] - size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] - size - aumento, obsPini[1] + size, obsPini[2] - size);
 	glEnd();
 
 	glPopMatrix();
@@ -1566,28 +1571,29 @@ void drawSkybox(float size) {
 	glPushMatrix();
 
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] - size);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] - size - aumento);
 	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] + size);
 	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] + size);
-	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] - size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] - size - aumento);
 	glEnd();
 
 	glPopMatrix();
 
-
+	int aumento2 = 0;
 	if (noite) {
 		glBindTexture(GL_TEXTURE_2D, textures[4]);
 	}
 	else {
+		aumento2 = 5;
 		glBindTexture(GL_TEXTURE_2D, textures[33]);
 	}
 	glPushMatrix();
 
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] + size);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] + size + aumento2, obsPini[1] - size, obsPini[2] + size);
 	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] - size, obsPini[1] - size, obsPini[2] + size);
 	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] - size, obsPini[1] + size, obsPini[2] + size);
-	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] + size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] + size + aumento2, obsPini[1] + size, obsPini[2] + size);
 	glEnd();
 
 	glPopMatrix();
