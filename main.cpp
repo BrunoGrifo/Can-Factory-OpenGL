@@ -22,6 +22,19 @@
 #define GRAY     0.9, 0.92, 0.29, 1.0
 #define PI       3.14159
 
+#define GRAY1    0.2, 0.2, 0.2, 1.0
+#define GRAY2    0.93, 0.93, 0.93, 1.0
+
+#define frand()			((float)rand()/RAND_MAX)
+#define MAX_PARTICULAS  25
+
+
+
+
+
+//============================================================== Iluminacao
+
+
 //---------------------------------------- Particle attributes
 typedef struct {
 	float   size;		// tamanho
@@ -50,6 +63,7 @@ GLfloat lightambient[]  = { intLuzA, intLuzA, intLuzA    };
 GLfloat lightdiffuse[]  = { intLuzD, intLuzD, intLuzD    };
 GLfloat lightspecular[] = {	   1.0,     1.0,   1.0	     };
 GLfloat dir[]={0,-1,0};
+GLint   noite = 1;
 
 
 
@@ -104,6 +118,21 @@ GLint    decal =0;		// Tipo de mapeamento na textura
 //======================================================================================
 
 
+						//-------------------- TExturas
+GLint   ligaLuz = 0;
+GLint   ligaLuz1 = 0;
+GLint   ligaLuz2 = 0;
+GLint   tet = 0;
+GLint trabalha = 1;
+
+
+GLfloat contraste1[] = {0.1,0.1,0.1};
+GLfloat contraste2[] = { 0.1,0.1,0.1 };
+
+GLfloat luzGlobalCor[4] = { 1.0,1.0,1.0,1.0 };
+
+
+
 //---------------------------------------------- Texturas
 GLuint  texture[1];
 char	 filename[1][12] = {"brilho0.bmp" };
@@ -113,7 +142,7 @@ char	 filename[1][12] = {"brilho0.bmp" };
 
 
 
-GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 },castanho[] = { 0.5 ,0.3 ,0.2 }, preto[] = { 0.2 ,0.2 ,0.2 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ,amarelo [] = {1, 1, 0.6} ,copo [] = {0.9,0.95,1};
+GLfloat  cinzento[] = { 0.5 ,0.5 ,0.5 },castanho[] = { 0.5 ,0.3 ,0.2 }, preto[] = { 0.2 ,0.2 ,0.2 }, azul [] = {0, 0, 1},vermelho [] = {1, 0, 0} ,amarelo [] = {1, 1, 0.6} ,copo [] = {0.9,0.95,1},branco[] = {1,1,1}, verde[] = { 0,1,0 };
 GLfloat luzAmbiente[4] = { 1,1,1,1 };
 //
 int w=0,s=0,d=0,a=0;
@@ -181,7 +210,20 @@ void iniParticulas(Particle *particula)
 	particula[i].fade = 0.001f;	// Em 100=1/0.01 iteracoes desaparece
 	}
 }
+void draw_objecto0()  // bule transparente FIXO (origem)
+{
+    glPushMatrix();
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, goldA);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, goldD);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, goldS);//falta um push e pop por as texturas dentro dos pops e pushs
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, goldC);
+    glBindTexture(GL_TEXTURE_2D, textures[40]);
+    glTranslatef(10.5, 2.26, 22.5);
+    glutSolidTeapot(0.3);
+    glPopMatrix();
+    //if (text == 1) glEnable(GL_TEXTURE_2D);
 
+}
 
 void showParticulas(Particle *particula, int sistema) {
  int i;
@@ -486,6 +528,12 @@ void criaDefineTexturas(void){
     defineTextura(27,"textures/coca3.bmp");
     defineTextura(28,"textures/coca4.bmp");
     defineTextura(29,"textures/wallstain.bmp");
+    defineTextura(30, "textures/1.bmp");
+	defineTextura(31, "textures/2.bmp");
+	defineTextura(32, "textures/3.bmp");
+	defineTextura(33, "textures/4.bmp");
+	defineTextura(34, "textures/5.bmp");
+	defineTextura(35, "textures/6.bmp");
     defineTextura(40,"textures/chaleira.bmp");
     defineTextura(41,"textures/factory.bmp");
     defineTextura(42,"textures/quadro1.bmp");
@@ -513,41 +561,49 @@ void drawFloor(GLfloat comp, GLfloat larg){
 }
 void drawCanEngine(){
     glDisable(GL_CULL_FACE);
-    for(int i=0;i<16;i++){
-        glPushMatrix();
-            glTranslatef(5.1,1.3,canWalk[0]+i-0.5);
-            glRotatef(-90, 1,0,0);
-            draw_cylinder(1,8);
-        glPopMatrix();
-    }
-    canWalk[0]+=0.02;
-    if(canWalk[0]>6)
-        canWalk[0]=5;
-    glEnable(GL_CULL_FACE);
 
-    for(int i=0;i<15;i++){
-        glPushMatrix();
-            glTranslatef(canWalk[1]+i,1.3,20.1);
-            glRotatef(-90, 1,0,0);
-            draw_cylinder(2,8);
-        glPopMatrix();
-    }
-    canWalk[1]+=0.02;
-    if(canWalk[1]>6)
-        canWalk[1]=5;
-    
-    for(int i=0;i<16;i++){
-        glPushMatrix();
-            glTranslatef(20.1,1.3,canWalk[2]-i+0.5);
-            glRotatef(-90, 1,0,0);
-            draw_cylinder(3,8);
-        glPopMatrix();
-    }
-    canWalk[2]-=0.02;
-    if(canWalk[2]<19)
-        canWalk[2]=20;
-    
-    glutPostRedisplay();
+	for (int i = 0; i<16; i++) {
+		glPushMatrix();
+		glTranslatef(5.1, 1.3, canWalk[0] + i - 0.5);
+		glRotatef(-90, 1, 0, 0);
+		draw_cylinder(1, 8);
+		glPopMatrix();
+		//printf("%.02f \n", canWalk[0]);
+	}
+	
+	if (trabalha) {
+		canWalk[0] += 0.02;
+		if (canWalk[0] > 6)
+			canWalk[0] = 5;
+	}
+	glEnable(GL_CULL_FACE);
+
+	for (int i = 0; i<15; i++) {
+		glPushMatrix();
+		glTranslatef(canWalk[1] + i, 1.3, 20.1);
+		glRotatef(-90, 1, 0, 0);
+		draw_cylinder(2, 8);
+		glPopMatrix();
+	}
+	if (trabalha) {
+		canWalk[1] += 0.02;
+		if (canWalk[1] > 6)
+			canWalk[1] = 5;
+	}
+
+	for (int i = 0; i<16; i++) {
+		glPushMatrix();
+		glTranslatef(20.1, 1.3, canWalk[2] - i + 0.5);
+		glRotatef(-90, 1, 0, 0);
+		draw_cylinder(3, 8);
+		glPopMatrix();
+	}
+	if (trabalha) {
+		canWalk[2] -= 0.02;
+		if (canWalk[2] < 19)
+			canWalk[2] = 20;
+	}
+	glutPostRedisplay();
 }
 
 void drawDetail(int index){
@@ -601,7 +657,8 @@ void drawCanFloorEngine(){
             drawCanFloor();
         glPopMatrix();
     }
-    floorWalk[0]+=0.02;
+    if(trabalha)
+        floorWalk[0]+=0.02;
 
     if(floorWalk[0]>=4.7){
         floorWalk[0]=3.7;
@@ -668,7 +725,7 @@ void drawLamps(){
             glBindTexture(GL_TEXTURE_2D, textures[21]);
             gluCylinder(lamp,0.4f,0.02f,1,15,10);
             glDisable(GL_TEXTURE_2D);
-            glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, branco);
             glTranslatef(0,0,0.1);
             glutSolidSphere(0.25, 50, 50);
         
@@ -689,7 +746,12 @@ void drawLamps(){
             glBindTexture(GL_TEXTURE_2D, textures[21]);
             gluCylinder(lamp,0.4f,0.02f,1,15,10);
             glDisable(GL_TEXTURE_2D);
-            glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            if (tet) {
+                glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            }
+            else {
+                glMaterialfv(GL_FRONT, GL_AMBIENT, branco);
+            }
             glTranslatef(0,0,0.1);
             glutSolidSphere(0.25, 50, 50);
     glPopMatrix();
@@ -709,7 +771,13 @@ void drawLamps(){
         glBindTexture(GL_TEXTURE_2D, textures[21]);
             gluCylinder(lamp,0.4f,0.02f,1,15,10);
             glDisable(GL_TEXTURE_2D);
-            glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            glDisable(GL_TEXTURE_2D);
+            if (tet) {
+                glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            }
+            else {
+                glMaterialfv(GL_FRONT, GL_AMBIENT, branco);
+            }
             glTranslatef(0,0,0.1);
             glutSolidSphere(0.25, 50, 50);
     glPopMatrix();
@@ -729,14 +797,95 @@ void drawLamps(){
             glBindTexture(GL_TEXTURE_2D, textures[21]);
             gluCylinder(lamp,0.4f,0.02f,1,15,10);
             glDisable(GL_TEXTURE_2D);
-            glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            if (tet) {
+                glMaterialfv(GL_FRONT, GL_AMBIENT, amarelo);
+            }
+            else {
+                glMaterialfv(GL_FRONT, GL_AMBIENT, branco);
+            }
             glTranslatef(0,0,0.1);
             glutSolidSphere(0.25, 50, 50);
     glPopMatrix();
+    glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, textures[21]);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+	glTranslatef(15, 5, 22.5);
+	glRotatef(-90, 1, 0, 0);
+	gluQuadricDrawStyle(lamp, GLU_FILL);
+	gluQuadricNormals(lamp, GLU_SMOOTH);
+	gluQuadricTexture(lamp, GL_TRUE);
+	glDisable(GL_TEXTURE_2D);
+	gluCylinder(lamp, 0.02f, 0.02f, 6, 15, 10);
+	glTranslatef(0, 0, -1);
+	glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+	glBindTexture(GL_TEXTURE_2D, textures[21]);
+	gluCylinder(lamp, 0.4f, 0.02f, 1, 15, 10);
+	glDisable(GL_TEXTURE_2D);
+	if (ligaLuz2) {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, azul);
+	}
+	else {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, branco);
+	}
+	glTranslatef(0, 0, 0.1);
+	glutSolidSphere(0.25, 50, 50);
+	glPopMatrix();
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, textures[21]);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+	glTranslatef(13.5, 5, 22.5);
+	glRotatef(-90, 1, 0, 0);
+	gluQuadricDrawStyle(lamp, GLU_FILL);
+	gluQuadricNormals(lamp, GLU_SMOOTH);
+	gluQuadricTexture(lamp, GL_TRUE);
+	glDisable(GL_TEXTURE_2D);
+	gluCylinder(lamp, 0.02f, 0.02f, 6, 15, 10);
+	glTranslatef(0, 0, -1);
+	glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+	glBindTexture(GL_TEXTURE_2D, textures[21]);
+	gluCylinder(lamp, 0.4f, 0.02f, 1, 15, 10);
+	glDisable(GL_TEXTURE_2D);
+	if (ligaLuz) {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, verde);
+	}
+	else {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, branco);
+	}
+	glTranslatef(0, 0, 0.1);
+	glutSolidSphere(0.25, 50, 50);
+	glPopMatrix();
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, textures[21]);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, preto);
+	glTranslatef(12, 5, 22.5);
+	glRotatef(-90, 1, 0, 0);
+	gluQuadricDrawStyle(lamp, GLU_FILL);
+	gluQuadricNormals(lamp, GLU_SMOOTH);
+	gluQuadricTexture(lamp, GL_TRUE);
+	glDisable(GL_TEXTURE_2D);
+	gluCylinder(lamp, 0.02f, 0.02f, 6, 15, 10);
+	glTranslatef(0, 0, -1);
+	glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+	glBindTexture(GL_TEXTURE_2D, textures[21]);
+	gluCylinder(lamp, 0.4f, 0.02f, 1, 15, 10);
+	glDisable(GL_TEXTURE_2D);
+	if (ligaLuz1) {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, vermelho);
+	}
+	else {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, branco);
+	}
+	glTranslatef(0, 0, 0.1);
+	glutSolidSphere(0.25, 50, 50);
+	glPopMatrix();
     glEnable(GL_CULL_FACE);
 }
 void drawMesaDeatails(){
     drawTRBlock(9.5,1.8,1.8,90,0,1,0,1.2,0.2,6,19);
+    drawTRBlock(9.5, 1.8, 23, 90, 0, 1, 0, 1.2, 0.2, 6, 19);
     glPushMatrix();
         glEnable(GL_TEXTURE_2D);	              // Select Our Texture
         glBindTexture(GL_TEXTURE_2D, textures[18]);
@@ -750,6 +899,20 @@ void drawMesaDeatails(){
             gluCylinder(lamp,0.8f,0.1f,1.2,30,10);
         glDisable(GL_TEXTURE_2D);
     glPopMatrix();
+
+    glPushMatrix();
+	glEnable(GL_TEXTURE_2D);	              // Select Our Texture
+	glBindTexture(GL_TEXTURE_2D, textures[18]);
+	glTranslatef(12.5, 1.3, 22.4);
+	glRotatef(-90, 1, 0, 0);
+	gluQuadricDrawStyle(lamp, GLU_FILL);
+	gluQuadricNormals(lamp, GLU_SMOOTH);
+	gluQuadricTexture(lamp, GL_TRUE);
+	gluCylinder(lamp, 0.1f, 0.4f, 0.5, 15, 10);
+	glTranslatef(0, 0, -1.2);
+	gluCylinder(lamp, 0.8f, 0.1f, 1.2, 30, 10);
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
 
     glPushMatrix();
         //glEnable(GL_TEXTURE_2D);
@@ -779,7 +942,7 @@ void drawMesaDeatails(){
         glPopMatrix();
         //glDisable(GL_TEXTURE_2D);
     glPopMatrix();
-
+    draw_objecto0();
 
     //cadeira
     drawTRBlock(15,0,3,-90,1,0,0,0.1,0.1,2.3,19);
@@ -814,6 +977,37 @@ void drawMesaDeatails(){
         glRotatef(-15,0,0,1);
         drawDetail(25);
     glPopMatrix();
+
+    glDisable(GL_CULL_FACE);
+    glPushMatrix();
+	glMaterialfv(GL_FRONT, GL_AMBIENT,cinzento);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, cinzento);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, cinzento);
+	
+
+	glTranslatef(15, 2, 22.5);
+	glRotatef(-90, 1, 0, 0);
+	draw_cylinder(1,8);
+	glPopMatrix();
+	
+	glPushMatrix();
+	glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, cinzento);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, cinzento);
+	glTranslatef(13.5, 2, 22.5);
+	glRotatef(-90, 1, 0, 0);
+	draw_cylinder(1,8);
+	glPopMatrix();
+	
+	glPushMatrix();
+	glMaterialfv(GL_FRONT, GL_AMBIENT, cinzento);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, cinzento);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, cinzento);
+	glTranslatef(12, 2, 22.5);
+	glRotatef(-90, 1, 0, 0);
+	draw_cylinder(1,8);
+	glPopMatrix();
+	glEnable(GL_CULL_FACE);
 
 }
 void drawCansAllOverThePlace(){
@@ -1322,8 +1516,8 @@ void updateKeys(){
 	lightdiffuse[0] = intLuzD;
 	lightdiffuse[1] = intLuzD;
 	lightdiffuse[2] = intLuzD;
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightambient );   
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightdiffuse ); 
+	//glLightfv(GL_LIGHT6, GL_AMBIENT, lightambient );   
+    //glLightfv(GL_LIGHT6, GL_DIFFUSE, lightdiffuse ); 
     
     if(pressed[8]==1){
         alfa=alfa+0.02;
@@ -1339,88 +1533,118 @@ void updateKeys(){
 
 	glutPostRedisplay();
 }
-void drawSkybox(float size){
-    
-    size = size/2.0f;
-    
-    glEnable(GL_TEXTURE_2D);
+void drawSkybox(float size) {
 
-    glBindTexture(GL_TEXTURE_2D,textures[5]);
-    glPushMatrix();
-    
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f,0.0f); glVertex3i(obsPini[0]-size,obsPini[1]-size,obsPini[2]-size);
-    glTexCoord2f(1.0f,0.0f); glVertex3i(obsPini[0]+size,obsPini[1]-size,obsPini[2]-size);
-    glTexCoord2f(1.0f,1.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]-size);
-    glTexCoord2f(0.0f,1.0f); glVertex3i(obsPini[0]-size,obsPini[1]+size,obsPini[2]-size);
-    glEnd();
-    
-    glPopMatrix();
-    
+	size = size / 2.0f;
 
-    glBindTexture(GL_TEXTURE_2D,textures[3]);
-    glPushMatrix();
-    
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f,0.0f); glVertex3i(obsPini[0]+size,obsPini[1]-size,obsPini[2]-size);
-    glTexCoord2f(1.0f,0.0f); glVertex3i(obsPini[0]+size,obsPini[1]-size,obsPini[2]+size);
-    glTexCoord2f(1.0f,1.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]+size);
-    glTexCoord2f(0.0f,1.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]-size);
-    glEnd();
-    
-    glPopMatrix();
-    
+	glEnable(GL_TEXTURE_2D);
 
-    glBindTexture(GL_TEXTURE_2D,textures[4]);
-    glPushMatrix();
-    
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f,0.0f); glVertex3i(obsPini[0]+size,obsPini[1]-size,obsPini[2]+size);
-    glTexCoord2f(1.0f,0.0f); glVertex3i(obsPini[0]-size,obsPini[1]-size,obsPini[2]+size);
-    glTexCoord2f(1.0f,1.0f); glVertex3i(obsPini[0]-size,obsPini[1]+size,obsPini[2]+size);
-    glTexCoord2f(0.0f,1.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]+size);
-    glEnd();
-    
-    glPopMatrix();
-    
+	if (noite) {
+		glBindTexture(GL_TEXTURE_2D, textures[5]);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, textures[34]);
+	}
+	glPushMatrix();
 
-    glBindTexture(GL_TEXTURE_2D,textures[2]);
-    glPushMatrix();
-    
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f,0.0f); glVertex3i(obsPini[0]-size,obsPini[1]-size,obsPini[2]+size);
-    glTexCoord2f(1.0f,0.0f); glVertex3i(obsPini[0]-size,obsPini[1]-size,obsPini[2]-size);
-    glTexCoord2f(1.0f,1.0f); glVertex3i(obsPini[0]-size,obsPini[1]+size,obsPini[2]-size);
-    glTexCoord2f(0.0f,1.0f); glVertex3i(obsPini[0]-size,obsPini[1]+size,obsPini[2]+size);
-    glEnd();
-    
-    glPopMatrix();
-    
-    glBindTexture(GL_TEXTURE_2D,textures[6]);
-    glPushMatrix();
-    
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f,0.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]-size);
-    glTexCoord2f(1.0f,0.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]+size);
-    glTexCoord2f(1.0f,1.0f); glVertex3i(obsPini[0]-size,obsPini[1]+size,obsPini[2]+size);
-    glTexCoord2f(0.0f,1.0f); glVertex3i(obsPini[0]-size,obsPini[1]+size,obsPini[2]-size);
-    glEnd();
-    
-    glPopMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] - size, obsPini[1] - size, obsPini[2] - size);
+	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] - size);
+	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] - size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] - size, obsPini[1] + size, obsPini[2] - size);
+	glEnd();
 
-    //Bottom
-    glBindTexture(GL_TEXTURE_2D,textures[1]);
-    glPushMatrix();
-    
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f,0.0f); glVertex3i(obsPini[0]-size,obsPini[1]-size,obsPini[2]-size);
-    glTexCoord2f(1.0f,0.0f); glVertex3i(obsPini[0]-size,obsPini[1]-size,obsPini[2]-size);
-    glTexCoord2f(1.0f,1.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]-size);
-    glTexCoord2f(0.0f,1.0f); glVertex3i(obsPini[0]+size,obsPini[1]+size,obsPini[2]-size);
-    glEnd();
-    
-    glPopMatrix();
-    
+	glPopMatrix();
+
+
+	if (noite) {
+		glBindTexture(GL_TEXTURE_2D, textures[3]);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, textures[30]);
+	}
+	glPushMatrix();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] - size);
+	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] + size);
+	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] + size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] - size);
+	glEnd();
+
+	glPopMatrix();
+
+
+	if (noite) {
+		glBindTexture(GL_TEXTURE_2D, textures[4]);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, textures[33]);
+	}
+	glPushMatrix();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] - size, obsPini[2] + size);
+	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] - size, obsPini[1] - size, obsPini[2] + size);
+	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] - size, obsPini[1] + size, obsPini[2] + size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] + size);
+	glEnd();
+
+	glPopMatrix();
+
+
+	if (noite) {
+		glBindTexture(GL_TEXTURE_2D, textures[2]);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, textures[32]);
+	}
+	glPushMatrix();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] - size, obsPini[1] - size, obsPini[2] + size);
+	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] - size, obsPini[1] - size, obsPini[2] - size);
+	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] - size, obsPini[1] + size, obsPini[2] - size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] - size, obsPini[1] + size, obsPini[2] + size);
+	glEnd();
+
+	glPopMatrix();
+
+	if (noite) {
+		glBindTexture(GL_TEXTURE_2D, textures[6]);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, textures[35]);
+	}
+	glPushMatrix();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] - size);
+	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] + size);
+	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] - size, obsPini[1] + size, obsPini[2] + size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] - size, obsPini[1] + size, obsPini[2] - size);
+	glEnd();
+
+	glPopMatrix();
+
+	//Bottom
+	if (noite) {
+		glBindTexture(GL_TEXTURE_2D, textures[1]);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, textures[21]);
+	}
+	glPushMatrix();
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3i(obsPini[0] - size, obsPini[1] - size, obsPini[2] - size);
+	glTexCoord2f(1.0f, 0.0f); glVertex3i(obsPini[0] - size, obsPini[1] - size, obsPini[2] - size);
+	glTexCoord2f(1.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] - size);
+	glTexCoord2f(0.0f, 1.0f); glVertex3i(obsPini[0] + size, obsPini[1] + size, obsPini[2] - size);
+	glEnd();
+
+	glPopMatrix();
+
 }
 void drawPathParts(GLfloat* cor,double T1,double T2,double T3,double dB1,double dB2,double dB3,double dBFlag){
     glPushMatrix();
@@ -1520,7 +1744,46 @@ void display(void){
 
     //Posição do observador
     gluLookAt(obsPini[0], obsPini[1], obsPini[2], obsPfin[0], obsPfin[1], obsPfin[2], 0, 1, 0);
-    
+    GLfloat localPos[4] = { 13.5,5,22.5 ,1 };
+	GLfloat localPos1[4] = { 12.0,5,22.5 ,1.0 };
+	GLfloat localPos2[4] = { 15.0,5.0,22.5 ,1.0 };
+	GLfloat localPos3[4] = { 16, 9, 8 ,1.0 };
+	GLfloat localPos4[4] = { 8, 9, 16 ,1.0 };
+	GLfloat localPos5[4] = { 16, 9, 16 ,1.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, localPos);
+	glLightfv(GL_LIGHT1, GL_POSITION, localPos1);
+	glLightfv(GL_LIGHT2, GL_POSITION, localPos2);
+	glLightfv(GL_LIGHT3, GL_POSITION, localPos3);
+	glLightfv(GL_LIGHT4, GL_POSITION, localPos4);
+	glLightfv(GL_LIGHT5, GL_POSITION, localPos5);
+
+
+	if (noite)
+		glClearColor(GRAY1);
+	else
+		glClearColor(GRAY2);
+	if (ligaLuz)
+		glEnable(GL_LIGHT0);
+	else
+		glDisable(GL_LIGHT0);
+	if (ligaLuz1)
+		glEnable(GL_LIGHT1);
+	else
+		glDisable(GL_LIGHT1);
+	if (ligaLuz2)
+		glEnable(GL_LIGHT2);
+	else
+		glDisable(GL_LIGHT2);
+	if (tet) {
+		glEnable(GL_LIGHT3);
+		glEnable(GL_LIGHT4);
+		glEnable(GL_LIGHT5);
+	}else {
+		glDisable(GL_LIGHT3);
+		glDisable(GL_LIGHT4);
+		glDisable(GL_LIGHT5);
+	}
+
     drawSkybox(100.0f);
     drawHouse();
     //Desenha "cena"
@@ -1592,6 +1855,20 @@ void keyboardUp(unsigned char key, int x, int y){
         case 'H':
         	pressed[11]=0;
         	break;
+        case 'N':
+        case 'n':
+            noite = !noite;
+            if (noite)
+            {
+                luzGlobalCor[0] = 1.0;   luzGlobalCor[1] = 1.0;   luzGlobalCor[2] = 1.0;
+            }
+            else
+            {
+                luzGlobalCor[0] = 0.4;   luzGlobalCor[1] = 0.4;   luzGlobalCor[2] = 0.4;
+            }
+            glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzGlobalCor);
+            glutPostRedisplay();
+            break;
         case 27:
             exit(0);
             break;
@@ -1623,30 +1900,48 @@ void keyboardDown(unsigned char key, int x, int y){
         case 'l':
         case 'L':
         	pressed[5]=1;
+        	break;  
+        case 'i':
+        case 'I':
+            pressed[6]=1;
         	break;
-        case 'e':
-        case 'E':
-        	iniParticulas(particula1);
-            faisca=1;
+        case 't':
+        case 'T':
             if(alavanca==0){
                 if(alavancaLigada==0){
                     alavancaLigada=1;
                 }else
                     alavancaLigada=0;
             }else
-                alavanca=0;
-        	break;
-        case 'n':
-        case 'N':
-        	break;
-        case 'i':
-        case 'I':
-            pressed[6]=1;
-        	break;
+                alavanca=0; 
+            trabalha = !trabalha;
+            glutPostRedisplay();
+            break;
+        case 'g':
+        case 'G':
+            ligaLuz = !ligaLuz;
+            glutPostRedisplay();
+            break;
+        case 'r':
+        case 'R':
+            ligaLuz1 = !ligaLuz1;
+            glutPostRedisplay();
+            break;
+        case 'b':
+        case 'B':
+            ligaLuz2 = !ligaLuz2;
+            glutPostRedisplay();
+            break;
+        case 'e':
+        case 'E':
+            iniParticulas(particula1);
+            faisca=1;
+            break;
         case 'k':
         case 'K':
-        	pressed[7]=1;
-        	break;
+            tet = !tet;
+            glutPostRedisplay();
+            break;
         case 'u':
         case 'U':
         	pressed[8]=1;
@@ -1675,6 +1970,81 @@ void idle(void)
  glutPostRedisplay();
 
 }
+void initLights(void) {
+	//…………………………………………………………………………………………………………………………………………… Ambiente
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzGlobalCor);
+
+	GLfloat localCor[4] = { 0.0,1.0,0.0,1.0 };
+	GLfloat localCorDif[4] = { 0.4, 0.4, 0.4, 1.0 };
+	
+
+	GLfloat localAttCon = 1.0;
+	GLfloat localAttLin = 0.007;
+	GLfloat localAttQua = 0.0;
+	GLfloat dire[4] = { 0,-1,0,0 };
+	GLfloat spec[4] = { 1,1,1,1 };
+	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, localCor);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, localCorDif);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, dire);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, spec);
+	//glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 0.0);
+	//glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, localAttCon);
+	//glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, localAttLin);
+	//glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, localAttQua);
+
+	GLfloat localCor1[4] = { 1.0,0.0,0.0,1.0 };
+	GLfloat localCorDif1[4] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat localPos1[4] = { 13.5,4.0,1.0 ,1.0 };
+	GLfloat localAttCon1 = 1.0;
+	GLfloat localAttLin1 = 0.007;
+	GLfloat localAttQua1 = 0.0;
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, localCor1);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, localCorDif1);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dire);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, spec);
+
+
+	GLfloat localCor2[4] = { 0.0,0.0,1.0,1.0 };
+	GLfloat localCorDif2[4] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat localPos2[4] = { 15.0,4.0,1.0 ,1.0 };
+	GLfloat localAttCon2 = 1.0;
+	GLfloat localAttLin2 = 0.05;
+	GLfloat localAttQua2 = 0.0;
+
+
+	glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 30.0);
+	glLightfv(GL_LIGHT2, GL_AMBIENT, localCor2);
+	glLightfv(GL_LIGHT2, GL_DIFFUSE, localCorDif2);
+	glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, dire);
+	glLightfv(GL_LIGHT2, GL_SPECULAR, spec);
+	//glLightf(GL_LIGHT2, GL_SHININESS, 32.0);
+
+	GLfloat localCor3[4] = { 1.0,1.0,0.0,1.0 };
+
+	glLightf(GL_LIGHT3, GL_SPOT_CUTOFF, 30.0);
+	glLightfv(GL_LIGHT3, GL_AMBIENT, localCor3);
+	glLightfv(GL_LIGHT3, GL_DIFFUSE, localCorDif);
+	glLightfv(GL_LIGHT3, GL_SPOT_DIRECTION, dire);
+	glLightfv(GL_LIGHT3, GL_SPECULAR, spec);
+
+	glLightf(GL_LIGHT4, GL_SPOT_CUTOFF, 30.0);
+	glLightfv(GL_LIGHT4, GL_AMBIENT, localCor3);
+	glLightfv(GL_LIGHT4, GL_DIFFUSE, localCorDif);
+	glLightfv(GL_LIGHT4, GL_SPOT_DIRECTION, dire);
+	glLightfv(GL_LIGHT4, GL_SPECULAR, spec);
+
+	glLightf(GL_LIGHT5, GL_SPOT_CUTOFF, 30.0);
+	glLightfv(GL_LIGHT5, GL_AMBIENT, localCor3);
+	glLightfv(GL_LIGHT5, GL_DIFFUSE, localCorDif);
+	glLightfv(GL_LIGHT5, GL_SPOT_DIRECTION, dire);
+	glLightfv(GL_LIGHT5, GL_SPECULAR, spec);
+
+
+
+
+}
 
 void Timer(int value) 
 {
@@ -1694,6 +2064,7 @@ void init(void){
     glEnable(GL_TEXTURE_2D);
     iniParticulas(particula1);
     glEnable(GL_LIGHTING);
+    initLights();
     
     
     
